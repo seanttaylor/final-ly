@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Essential Meta -->
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- iOS Specific -->
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="App Name" />
+    <link rel="apple-touch-startup-image"
+      media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)"
+      href="/splash/launch-1125x2436.png" />
+    <link rel="apple-touch-startup-image"
+          media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)"
+          href="/splash/launch-1170x2532.png" />
+    <link rel="apple-touch-startup-image"
+          media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)"
+          href="/img/splash-750x1334.png" />
+
+    <!-- Android Specific -->
+    <meta name="msapplication-TileColor" content="#ffffff" />
+
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ejs@3.1.10/ejs.min.js"></script>
+    <script src="./js/main.js" type="module"></script>
+    <style>
+      .logo {
+        width: 60px;
+        height: 60px;
+        margin: 40px auto 20px;
+        border: 2px solid #00c851;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: #00c851;
+      }
+      .social-icons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin: 20px 0;
+      }
+      .social-icons img {
+        width: 36px;
+        height: 36px;
+      }
+      .signup {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .signup a {
+        color: #00c851;
+        font-weight: bold;
+        text-decoration: none;
+      }
+    </style>
+  
+    <title>Mobile App</title>
+  </head>
+  <body>
+    <ion-app>
+      <ion-router id="router" use-hash="true">
+        <ion-route url="/" component="page-signin"></ion-route>
+        <ion-route url="/home" component="page-home"></ion-route>
+      </ion-router>
+  
+      <ion-nav></ion-nav>
+    </ion-app>
+  
+    <script type="module">
+      class PageSignin extends HTMLElement {
+        connectedCallback() {
+          this.innerHTML = `
+            <ion-content class="ion-padding" fullscreen>
+              <div class="logo">&</div>
+              <ion-text class="ion-text-center">
+                <h2>Current.ly</h2>
+              </ion-text>
+  
+              <ion-list lines="none">
+                <ion-item>
+                  <ion-input type="email" placeholder="ex: jon.smith@gmail.com" label="Email" label-placement="fixed" fill="solid" mode="ios" shape="round"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input type="password" placeholder="*********" label="Password" label-placement="fixed" fill="outline"></ion-input>
+                </ion-item>
+              </ion-list>
+  
+              <ion-button expand="block" color="success" id="signinBtn">SIGN IN</ion-button>
+  
+              <ion-text class="ion-text-center">
+                <p>or sign in with</p>
+              </ion-text>
+  
+              <div class="social-icons">
+                <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/google.svg" alt="Google" height="24" />
+                <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/facebook.svg" alt="Facebook" height="24" />
+                <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitter.svg" alt="Twitter" height="24" />
+              </div>
+  
+              <div class="signup">
+          <p>Don't have an account? <a href="#">Sign Up</a></p>
+        </div>
+            </ion-content>
+          `;
+  
+          this.querySelector('#signinBtn').addEventListener('click', (e) => {
+            document.querySelector('ion-router').push('/home');
+          });
+        }
+      }
+  
+      class PageHome extends HTMLElement {
+        connectedCallback() {
+          this.innerHTML = `
+            <ion-header>
+              <ion-toolbar>
+                <ion-title>Home</ion-title>
+              </ion-toolbar>
+            </ion-header>
+            <ion-content class="ion-padding">
+              <h2>Welcome to the Home Page</h2>
+            </ion-content>
+          `;
+        }
+      }
+  
+      customElements.define('page-signin', PageSignin);
+      customElements.define('page-home', PageHome);
+    </script>
+  </body>
+</html>
