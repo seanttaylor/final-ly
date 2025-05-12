@@ -1,3 +1,5 @@
+import sha256 from 'https://esm.sh/js-sha256@latest';
+
 /**
  * @summary The core of the application; registers and emits events
  */
@@ -18,6 +20,9 @@ export class Sandbox extends EventTarget {
       const sandbox = {
         my: {},
         core: {
+          createHash(str) {
+            return sha256.create().update(str).hex();
+          },
           fetch: fetch,
           generateUUID: this.generateUUID,
           logger: {

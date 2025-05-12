@@ -1,3 +1,5 @@
+import { CronJob } from 'https://esm.sh/cron@latest';
+
 import { SystemEvent, Events } from '../../types/system-event.js';
 import { ApplicationService } from '../../types/application.js';
 
@@ -17,14 +19,14 @@ export class FeedService extends ApplicationService {
      * @param {Object} sandbox
      * @param {Object} sandbox.core
      * @param {Object} sandbox.my
-     * @param {MemoryCache} sandbox.my.cache
-     * @param {Object} sandbox.my.events
+     * @param {MemoryCache} sandbox.my.Cache
+     * @param {Object} sandbox.my.Events
      * @param {Object} sandbox.my.FeedProvider
      */
     constructor(sandbox) {
       super();
-      this.#cache = sandbox.my.cache;
-      this.#events = sandbox.my.events;
+      this.#cache = sandbox.my.Cache;
+      this.#events = sandbox.my.Events;
       this.#feedProvider = sandbox.my.FeedProvider;
       this.#logger = sandbox.core.logger.getLoggerInstance();
       this.#sandbox = sandbox;
@@ -103,7 +105,7 @@ export class FeedService extends ApplicationService {
   
               if (idx + 1 === array.length) {
                 this.#events.dispatchEvent(
-                  new SystemEvent(Events.FEED_REFRESH_COMPLETE)
+                  new SystemEvent(Events.FEEDS_REFRESHED)
                 );
               }
             }
@@ -115,5 +117,56 @@ export class FeedService extends ApplicationService {
         }
       );
     }
+}
+
+/**
+ *
+ */
+export class FeedMonitor extends ApplicationService {
+  #events;
+  #feedService;
+  #logger;
+
+  /**
+   * @param {Object} sandbox
+   * @param {Object} sandbox.my
+   * @param {Object} sandbox.my.Events
+   * @param {RSSFeedService} sandbox.my.FeedService
+   */
+  constructor(sandbox) {
+    super();
+    this.#events = sandbox.my.Events;
+    this.#feedService = sandbox.my.FeedService;
+    this.#logger = sandbox.core.logger.getLoggerInstance();
+
+    const EVERY_10_MIN = '*/2 * * * *';
+    try {
+      CronJob.from({
+        cronTime: EVERY_10_MIN,
+        onTick: this.#onScheduledRefresh.bind(this),
+        start: true,
+        timeZone: 'America/Los_Angeles',
+      });
+      this.#logger.info('INFO (FeedMonitor): Feed monitor initialized');
+      
+    } catch(ex) {
+      this.#logger.error(
+        `INTERNAL_ERROR (FeedMonitor): Exception encountered while initializing the feed monitor. See details -> ${ex.message}`
+      );
+    }
   }
+
+  /**
+   *
+   */
+  async #onScheduledRefresh() {
+    try {
+      await this.#feedService.refresh();
+    } catch (ex) {
+      this.#logger.error(
+        `INTERNAL_ERROR (FeedMonitor): Exception encountered during scheduled feed refresh. See details -> ${ex.message}`
+      );
+    }
+  }
+}
   
