@@ -14,5 +14,6 @@ export const core = [
   
   // Objects containing generalized functionality consumed by the services above 
   export const providers = [
-    'FeedProvider'
+    'FeedProvider',
+    'PatchProvider'
   ];

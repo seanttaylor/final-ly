@@ -60,6 +60,9 @@ class DefaultFeedStrategy extends FeedStrategy {
   }
 }
 
+/**
+ * Contains all supported feeds and their strategies
+ */
 export class FeedProvider extends ApplicationService {
   #feeds = {};
   #logger;
@@ -88,4 +91,34 @@ export class FeedProvider extends ApplicationService {
       this[feed.name] = new DefaultFeedStrategy(feed, sandbox.my.Config.vars.JUST_CORS);
     });
   }
+}
+
+/**
+ * Contains JSON Patch documents for all suppported feeds to
+ * enable translation from the raw feed item structure to the 
+ * Current.ly canoncial feed item structure
+ */
+export class PatchProvider extends ApplicationService {
+  constructor() {
+    super();
+  }
+
+  axios = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'move', from: '/dc:creator', path: '/author' },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    {
+      op: 'move',
+      from: '/content:encoded',
+      path: '/html',
+    },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    { op: 'copy', from: '/media:thumbnail/url', path: '/thumbnail/url' },
+    { op: 'remove', path: '/media:content' },
+    { op: 'remove', path: '/media:thumbnail' },
+    { op: 'add', path: '/source', value: 'Axios' },
+  ];
 }
