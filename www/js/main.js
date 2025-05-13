@@ -32,6 +32,9 @@ Sandbox.modules.of('PatchProvider', PatchProvider);
 
 const APP_NAME = 'current.ly';
 const APP_VERSION = '0.0.1';
+const GLOBALS = {
+  recentlyUpdatedFeeds: new Set(),
+};
 
 /******** ENSURE DESIRED SERVICES ARE DEFINED IN EITHER `services` or `providers` ********/
 const MY_SERVICES = [...core, ...services, ...providers];
@@ -42,6 +45,7 @@ new Sandbox(MY_SERVICES, async function(box) {
     console.log(`${APP_NAME} v${APP_VERSION}`);
     console.log(box.my.NOOPService.status);
     //console.log(box.my.FeedMonitor.status);
+    console.log(box.my.PatchProvider.status)
     console.log(box.my.Cache.status);
 
     const feedStrategy = box.my.FeedProvider.axios;
@@ -51,11 +55,37 @@ new Sandbox(MY_SERVICES, async function(box) {
       console.log(event);
     });
 
-    box.my.Events.addEventListener(Events.FEED_UPDATED, onFeedUpdate);
+    box.my.Events.addEventListener(Events.FEED_UPDATED, wrapAsyncEventHandler(onFeedUpdate));
 
-    const request = await fetch('/api/getStatus');
-    const response = await request.json();
-    console.log(response);
+    setTimeout(() => {
+      box.my.Events.dispatchEvent(new SystemEvent(Events.FEED_UPDATED, {
+        feedName: 'axios',
+        key: 'feed.axios.cb5c6b9ac6e2a0e63eeec49fe3606f80ba94fe58c1f3582f17362e56905799f6',
+      }))
+    }, 5000);
+
+    // const request = await fetch('/api/getStatus'); 
+    // const response = await request.json();
+    // console.log(response);
+
+    /**
+     * Wraps async functions used as handlers for an
+     * `EventTarget` instance; ensures any thrown exceptions are
+     * caught by the main application
+     * @param {Function} fn
+     * @returns {Function}
+     */
+    function wrapAsyncEventHandler(fn) {
+      return async function ({ detail: event }) {
+        try {
+          await fn(event);
+        } catch (ex) {
+          console.error(
+            `INTERNAL_ERROR (Main.Utility): Exception encountered during async event handler (${event.header.name}) See details -> ${ex.message}`
+          );
+        }
+      };
+    }
 
     /**
      * Fires when a single subscribed feed has a new update
@@ -67,19 +97,20 @@ new Sandbox(MY_SERVICES, async function(box) {
       const { feedName } = payload;
 
       try {
-        app.globals.recentlyUpdatedFeeds.add(feedName);
-
-        if (PatchProvider[feedName]) {
-          const cachedRecord = await cache.get(payload.key);
+        GLOBALS.recentlyUpdatedFeeds.add(feedName);
+        // what happens if `cachedRecord` is undefined?
+        // it *SHOULDN'T* be undefined because the `payload.key` is the feed that was cached before the `FEED_UPDATED` event fires
+        if (box.my.PatchProvider[feedName]) {
+          const cachedRecord = await box.my.Cache.get(payload.key);
           const feed = JSON.parse(cachedRecord);
 
           const feedItems = feed.rss.channel.item.map((item) => {
             let patchSchema;
             try {
-              if (PatchProvider[feedName]?.validator) {
-                patchSchema = PatchProvider[feedName].validator(item);
+              if (box.my.PatchProvider[feedName]?.validator) {
+                patchSchema = box.my.PatchProvider[feedName].validator(item);
               } else {
-                patchSchema = PatchProvider[feedName];
+                patchSchema = box.my.PatchProvider[feedName];
               }
 
               let patchedItem = jsonpatch.applyPatch(
@@ -100,7 +131,7 @@ new Sandbox(MY_SERVICES, async function(box) {
 
           console.log({ canonicalizedFeed });
 
-          await cache.set(
+          await box.my.Cache.set(
             `feed.${feedName}.canonical`,
             JSON.stringify(canonicalizedFeed)
           );
