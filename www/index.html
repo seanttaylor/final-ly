@@ -69,6 +69,12 @@
         font-weight: bold;
         text-decoration: none;
       }
+      ion-item[x-currently] {
+        margin: 25px 0 25px 0;
+      }
+      .ion-page {
+        display: initial
+      }
     </style>
   
     <title>Mobile App</title>
@@ -81,7 +87,6 @@
       </ion-router>
   
       <ion-nav></ion-nav>
-      <currently-feed></currently-feed>
     </ion-app>
   
     <script type="module">
@@ -130,6 +135,7 @@
       class PageHome extends HTMLElement {
         connectedCallback() {
           this.innerHTML = `
+            <currently-feed></currently-feed>
             <ion-menu side="start" menu-id="main-menu" content-id="main-content">
               <ion-header>
                 <ion-toolbar>
@@ -154,9 +160,38 @@
                   <ion-title>Home</ion-title>
                 </ion-toolbar>
               </ion-header>
-              <ion-content class="ion-padding">
-                <h2>Welcome to the Home Page</h2>
-              </ion-content>
+              <ion-item x-currently>
+                <ion-thumbnail slot="start">
+                  <ion-skeleton-text animated="true"></ion-skeleton-text>
+                </ion-thumbnail>
+                <ion-label>
+                  <h3>
+                    <ion-skeleton-text animated="true" style="width: 80%;"></ion-skeleton-text>
+                  </h3>
+                  <p>
+                    <ion-skeleton-text animated="true" style="width: 60%;"></ion-skeleton-text>
+                  </p>
+                  <p>
+                    <ion-skeleton-text animated="true" style="width: 30%;"></ion-skeleton-text>
+                  </p>
+                </ion-label>
+              </ion-item>
+              <ion-item x-currently>
+                <ion-thumbnail slot="start">
+                  <ion-skeleton-text animated="true"></ion-skeleton-text>
+                </ion-thumbnail>
+                <ion-label>
+                  <h3>
+                    <ion-skeleton-text animated="true" style="width: 80%;"></ion-skeleton-text>
+                  </h3>
+                  <p>
+                    <ion-skeleton-text animated="true" style="width: 60%;"></ion-skeleton-text>
+                  </p>
+                  <p>
+                    <ion-skeleton-text animated="true" style="width: 30%;"></ion-skeleton-text>
+                  </p>
+                </ion-label>
+              </ion-item>
             </div>
           `;
         }

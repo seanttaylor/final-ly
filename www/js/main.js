@@ -49,23 +49,20 @@ new Sandbox(MY_SERVICES, async function(box) {
   try {
     console.log(`${APP_NAME} v${APP_VERSION}`);
     console.log(box.my.NOOPService.status);
-    //console.log(box.my.FeedMonitor.status);
     console.log(box.my.PatchProvider.status)
     console.log(box.my.Cache.status);
+    console.log(box.my.UIComponentProvider.status);
 
     const feedStrategy = box.my.FeedProvider.axios;
     box.my.FeedService.setStrategy(feedStrategy);
 
     box.my.Events.addEventListener(Events.FEEDS_REFRESHED, wrapAsyncEventHandler(onFeedsRefreshed));
     box.my.Events.addEventListener(Events.FEED_UPDATED, wrapAsyncEventHandler(onFeedUpdate));
+    box.my.Events.addEventListener(Events.FEED_COMPONENT_INITIALIZED, wrapAsyncEventHandler(onFeedInitialized));
 
-    setTimeout(() => {
-      box.my.Events.dispatchEvent(new SystemEvent(Events.FEEDS_REFRESHED, {}))
-    }, 5000);
-
-    // const request = await fetch('/api/getStatus'); 
-    // const response = await request.json();
-    // console.log(response);
+    // setTimeout(() => {
+    //   box.my.Events.dispatchEvent(new SystemEvent(Events.FEEDS_REFRESHED, {}))
+    // }, 5000);
 
     /**
      * Wraps async functions used as handlers for an
@@ -93,6 +90,7 @@ new Sandbox(MY_SERVICES, async function(box) {
     async function onFeedsRefreshed(event) {
       console.log(event);
       // get recently updated canonicalized feeds
+      console.log(box.my.Cache.keys())
       const updatedFeedNames = box.my.Cache.keys().filter((k) => k.includes('canonical'));
       const updatedFeeds = updatedFeedNames.map(async (key) => {
         return JSON.parse(await box.my.Cache.get(key));
@@ -103,6 +101,15 @@ new Sandbox(MY_SERVICES, async function(box) {
 
       // do all the post-processing of feeds
       // scoring, ranking, summarizing, etc.
+    }
+
+    /**
+     * Fires when a currently-feed component has been initialized in the DOM
+     * @param {IEvent<Object>} event
+     */
+    function onFeedInitialized(event) {
+      //console.log(box.my.FeedMonitor.status);
+      console.log(event);
     }
 
     /**
@@ -151,10 +158,10 @@ new Sandbox(MY_SERVICES, async function(box) {
 
          //console.log({ canonicalizedFeed });
 
-          await box.my.Cache.set(
-            `feed.${feedName}.canonical`,
-            JSON.stringify(canonicalizedFeed)
-          );
+          await box.my.Cache.set({
+            key: `feed.${feedName}.canonical`,
+            value: JSON.stringify(canonicalizedFeed)
+          });
 
           return;
         }

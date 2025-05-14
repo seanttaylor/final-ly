@@ -11,6 +11,11 @@ export const Events = Object.freeze({
   // Indicates a single feed has been updated and cached
   FEED_UPDATED: 'evt.feeds.feed_updated',
   FEED_MONITOR_INITIALIZED: 'evt.feeds.feed_monitor_initialized',
+  /*
+  * @property
+  * Indicates the currently-feed component has been initialized
+  */
+  FEED_COMPONENT_INITIALIZED: 'evt.ui.components.feed_initialized'
 });
 
 /**

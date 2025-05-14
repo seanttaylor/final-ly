@@ -71,11 +71,14 @@ export class FeedService extends ApplicationService {
             }
             const LAST_REFRESH_MILLIS =
               (await this.#cache.get(`feed.${feedName}.lastRefresh`)) || 0;
+            
             const TIMESTAMP_MILLIS = new Date().getTime();
             const ELAPSED_TIME_MILLIS = TIMESTAMP_MILLIS - LAST_REFRESH_MILLIS;
             const TTL = feedConfig?.TTL || this.#DEFAULT_TTL_MILLIS;
   
             if (ELAPSED_TIME_MILLIS > TTL && feedConfig.refreshType === 'pull') {
+              console.log({feedName})
+
               this.setStrategy(this.#feedProvider[feedName]);
   
               const feed = await this.getFeed();
@@ -102,12 +105,6 @@ export class FeedService extends ApplicationService {
                   feedName,
                 })
               );
-  
-              if (idx + 1 === array.length) {
-                this.#events.dispatchEvent(
-                  new SystemEvent(Events.FEEDS_REFRESHED)
-                );
-              }
             }
           } catch (ex) {
             this.#logger.error(
@@ -115,6 +112,10 @@ export class FeedService extends ApplicationService {
             );
           }
         }
+      );
+
+      this.#events.dispatchEvent(
+        new SystemEvent(Events.FEEDS_REFRESHED)
       );
     }
 }

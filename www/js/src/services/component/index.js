@@ -19,9 +19,11 @@ export class UIComponentProvider extends ApplicationService {
     this.#sandbox = sandbox;
     this.#logger = sandbox.core.logger.getLoggerInstance();
 
-    customElements.define('currently-feed', UIFeed);
+    customElements.define('currently-feed', UIFeed.getComponent(sandbox));
   }
 
-  Feed = document.querySelector('currently-feed');
+  get Feed() {
+    return document.querySelector('currently-feed');
+  }
 
 }

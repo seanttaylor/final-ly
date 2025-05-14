@@ -22,8 +22,8 @@ export class MemoryCache extends SimpleCache {
     }
 
     get(key) {
-        return JSON.stringify(FakeRSSFeed);
-        //return memoryCache.get(key);
+        //return JSON.stringify(FakeRSSFeed);
+        return memoryCache.get(key);
     }
 
     deleteEntry(key) {
