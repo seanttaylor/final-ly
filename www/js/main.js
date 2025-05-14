@@ -1,6 +1,7 @@
 import { Sandbox } from './src/sandbox.js';
 import { SystemEvent, Events } from './src/types/system-event.js';
 import { core, services, providers } from './src/services.js';
+import * as jsonpatch from 'https://esm.sh/fast-json-patch@latest';
 
 /******** INTERFACES ********/
 
@@ -15,20 +16,24 @@ import { FeedService, FeedMonitor } from './src/services/feed/index.js';
 import { FeedProvider} from './src/services/feed/provider/index.js';
 import { NOOPService } from './src/services/noop/index.js';
 
-import { PatchProvider } from './src/services/feed/provider/index.js';
 import { MemoryCache } from './src/cache/memory.js';
+import { PatchProvider } from './src/services/feed/provider/index.js';
+import { UIComponentProvider } from './src/services/component/index.js';
 import { Xevents } from './src/services/event/index.js';
+
 
 /******** REGISTRATION ********/
 Sandbox.modules.of('Config', Configuration);
-Sandbox.modules.of('Cache', MemoryCache);
 Sandbox.modules.of('Events', Xevents);
 Sandbox.modules.of('FeedProvider', FeedProvider);
+Sandbox.modules.of('Cache', MemoryCache);
 
 Sandbox.modules.of('FeedService', FeedService);
 Sandbox.modules.of('FeedMonitor', FeedMonitor);
 Sandbox.modules.of('NOOPService', NOOPService);
 Sandbox.modules.of('PatchProvider', PatchProvider);
+
+Sandbox.modules.of('UIComponentProvider', UIComponentProvider)
 
 const APP_NAME = 'current.ly';
 const APP_VERSION = '0.0.1';
@@ -51,17 +56,11 @@ new Sandbox(MY_SERVICES, async function(box) {
     const feedStrategy = box.my.FeedProvider.axios;
     box.my.FeedService.setStrategy(feedStrategy);
 
-    box.my.Events.addEventListener(Events.FEEDS_REFRESHED, ({ detail: event }) => {
-      console.log(event);
-    });
-
+    box.my.Events.addEventListener(Events.FEEDS_REFRESHED, wrapAsyncEventHandler(onFeedsRefreshed));
     box.my.Events.addEventListener(Events.FEED_UPDATED, wrapAsyncEventHandler(onFeedUpdate));
 
     setTimeout(() => {
-      box.my.Events.dispatchEvent(new SystemEvent(Events.FEED_UPDATED, {
-        feedName: 'axios',
-        key: 'feed.axios.cb5c6b9ac6e2a0e63eeec49fe3606f80ba94fe58c1f3582f17362e56905799f6',
-      }))
+      box.my.Events.dispatchEvent(new SystemEvent(Events.FEEDS_REFRESHED, {}))
     }, 5000);
 
     // const request = await fetch('/api/getStatus'); 
@@ -81,10 +80,29 @@ new Sandbox(MY_SERVICES, async function(box) {
           await fn(event);
         } catch (ex) {
           console.error(
-            `INTERNAL_ERROR (Main.Utility): Exception encountered during async event handler (${event.header.name}) See details -> ${ex.message}`
+            `INTERNAL_ERROR (Main): Exception encountered during async event handler (${fn.name}) See details -> ${ex.message}`
           );
         }
       };
+    }
+
+    /**
+     * Fires when all subscribed feed updates have been completed or atttempted
+     * @param {IEvent<Object>} event
+     */
+    async function onFeedsRefreshed(event) {
+      console.log(event);
+      // get recently updated canonicalized feeds
+      const updatedFeedNames = box.my.Cache.keys().filter((k) => k.includes('canonical'));
+      const updatedFeeds = updatedFeedNames.map(async (key) => {
+        return JSON.parse(await box.my.Cache.get(key));
+      });
+
+      const feedList = await Promise.all(updatedFeeds);      
+      box.my.UIComponentProvider.Feed.onComponentUpdate(feedList);
+
+      // do all the post-processing of feeds
+      // scoring, ranking, summarizing, etc.
     }
 
     /**
@@ -120,7 +138,9 @@ new Sandbox(MY_SERVICES, async function(box) {
 
               return patchedItem;
             } catch (ex) {
-              console.error(ex.message);
+              console.error(`INTERNAL_ERROR (Main): Exception encountered while patching feed item in (${feedName}) feed. See details -> ${ex.message}`
+              );
+              return;
             }
           });
 
@@ -129,7 +149,7 @@ new Sandbox(MY_SERVICES, async function(box) {
             items: feedItems,
           };
 
-          console.log({ canonicalizedFeed });
+         //console.log({ canonicalizedFeed });
 
           await box.my.Cache.set(
             `feed.${feedName}.canonical`,

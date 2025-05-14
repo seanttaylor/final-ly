@@ -1,7 +1,9 @@
 import memoryCache from 'https://esm.sh/memory-cache@latest';
 import { SimpleCache } from './index.js';
 
-const DEFAULT_TTL_MILLIS = 86400000;
+import { FakeRSSFeed } from '../fakes/index.js';
+
+const DEFAULT_TTL_MILLIS = 86400000; // 24 hours
 
 export class MemoryCache extends SimpleCache {
     constructor() {
@@ -20,7 +22,8 @@ export class MemoryCache extends SimpleCache {
     }
 
     get(key) {
-        return memoryCache.get(key);
+        return JSON.stringify(FakeRSSFeed);
+        //return memoryCache.get(key);
     }
 
     deleteEntry(key) {
@@ -33,5 +36,9 @@ export class MemoryCache extends SimpleCache {
 
     has(key) {
         return memoryCache.keys().includes(key);
+    }
+
+    keys() {
+        return memoryCache.keys();
     }
 }
