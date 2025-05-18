@@ -1,5 +1,10 @@
 {
   "firebase_hosting": {
     "deploymentHostingUrl": "https://finally-f1693.web.app"
+  },
+  "cloud_run_deploy": {
+    "region": "us-central1",
+    "sourceFlag": "--source ./backend",
+    "allowUnauthenticatedInvocationsFlag": "--allow-unauthenticated"
   }
 }

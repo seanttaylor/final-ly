@@ -149,6 +149,9 @@ export class FeedMonitor extends ApplicationService {
         timeZone: 'America/Los_Angeles',
       });
       this.#logger.info('INFO (FeedMonitor): Feed monitor initialized');
+      this.#events.dispatchEvent(
+        new SystemEvent(Events.FEED_MONITOR_INITIALIZED)
+      );
       
     } catch(ex) {
       this.#logger.error(

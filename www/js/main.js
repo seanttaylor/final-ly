@@ -108,7 +108,7 @@ new Sandbox(MY_SERVICES, async function(box) {
      * @param {IEvent<Object>} event
      */
     function onFeedInitialized(event) {
-      //console.log(box.my.FeedMonitor.status);
+      console.log(box.my.FeedMonitor.status);
       console.log(event);
     }
 
@@ -156,7 +156,7 @@ new Sandbox(MY_SERVICES, async function(box) {
             items: feedItems,
           };
 
-         //console.log({ canonicalizedFeed });
+          console.log({ canonicalizedFeed });
 
           await box.my.Cache.set({
             key: `feed.${feedName}.canonical`,
