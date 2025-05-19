@@ -24,10 +24,9 @@ export class Configuration extends ApplicationService {
      */
     get vars() {
         return {
-            BACKEND_URL: 'https://8080-idx-final-ly-1746393087160.cluster-joak5ukfbnbyqspg4tewa33d24.cloudworkstations.dev',
             // Just Cors is a proxy which adds CORS headers to the proxied request. See https://justcors.com/ 
             JUST_CORS: 'https://justcors.com/tl_fd8cd2e/',
-            
+            PORT: 8080
         };
     }
 

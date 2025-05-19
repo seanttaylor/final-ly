@@ -35,7 +35,7 @@ Sandbox.modules.of('PatchProvider', PatchProvider);
 
 Sandbox.modules.of('UIComponentProvider', UIComponentProvider)
 
-const APP_NAME = 'current.ly';
+const APP_NAME = 'com.current.ly.frontend';
 const APP_VERSION = '0.0.1';
 const GLOBALS = {
   recentlyUpdatedFeeds: new Set(),
@@ -59,6 +59,10 @@ new Sandbox(MY_SERVICES, async function(box) {
     box.my.Events.addEventListener(Events.FEEDS_REFRESHED, wrapAsyncEventHandler(onFeedsRefreshed));
     box.my.Events.addEventListener(Events.FEED_UPDATED, wrapAsyncEventHandler(onFeedUpdate));
     box.my.Events.addEventListener(Events.FEED_COMPONENT_INITIALIZED, wrapAsyncEventHandler(onFeedInitialized));
+
+    const request = await fetch(`${box.my.Config.vars.BACKEND_URL}/status`);
+    const response = await request.json();
+    console.log(response);
 
     // setTimeout(() => {
     //   box.my.Events.dispatchEvent(new SystemEvent(Events.FEEDS_REFRESHED, {}))
