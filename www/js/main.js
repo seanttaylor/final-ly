@@ -49,12 +49,9 @@ new Sandbox(MY_SERVICES, async function(box) {
   try {
     console.log(`${APP_NAME} v${APP_VERSION}`);
     console.log(box.my.NOOPService.status);
-    console.log(box.my.PatchProvider.status)
-    console.log(box.my.Cache.status);
-    console.log(box.my.UIComponentProvider.status);
 
-    const feedStrategy = box.my.FeedProvider.axios;
-    box.my.FeedService.setStrategy(feedStrategy);
+    //const feedStrategy = box.my.FeedProvider.axios;
+    //box.my.FeedService.setStrategy(feedStrategy);
 
     box.my.Events.addEventListener(Events.FEEDS_REFRESHED, wrapAsyncEventHandler(onFeedsRefreshed));
     box.my.Events.addEventListener(Events.FEED_UPDATED, wrapAsyncEventHandler(onFeedUpdate));

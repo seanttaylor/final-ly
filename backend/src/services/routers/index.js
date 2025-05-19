@@ -3,6 +3,7 @@
 
 import { ApplicationService } from '../../types/application.js';
 import { StatusRouter } from './status.js';
+import { FeedRouter } from './feed.js';
 //import { EventsRouter } from './events.js';
 
 /**
@@ -27,6 +28,7 @@ export class RouteService extends ApplicationService {
     const config = this.#sandbox.my.Config;
 
     this.Status = new StatusRouter(/*this.#sandbox.my.MiddlewareProvider*/);
+    this.Feed = new FeedRouter({ config, events });
     //this.Events = new EventsRouter({ MiddlewareProvider, events });
   }
 }

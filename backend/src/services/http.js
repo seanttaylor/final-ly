@@ -69,6 +69,7 @@ export class HTTPService extends ApplicationService {
     });
     
     app.use(this.#sandbox.my.RouteService.Status);
+    app.use(this.#sandbox.my.RouteService.Feed);
 
     // Rate-limited routes
     app.use(simpleRateLimiter);

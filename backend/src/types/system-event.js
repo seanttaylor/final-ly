@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 /******** EVENT IDENTIFIERS ********/
 
 /**
@@ -34,7 +36,7 @@ class CustomEvent extends Event {
  */
 export class SystemEvent {
   header = {
-    id: window.crypto.randomUUID(),
+    id: randomUUID(),
     timestamp: new Date().toISOString(),
     meta: { _open: { rel: null, type: null } },
     name: null,
