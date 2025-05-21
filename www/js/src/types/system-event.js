@@ -7,7 +7,7 @@
 export const Events = Object.freeze({
   APP_INITIALIZED: 'evt.system.app_initialized',
   // Indicates all subscribed feeds have been refreshed
-  FEEDS_REFRESHED: 'evt.feeds.feeds_refreshed',
+  FEED_REFRESHED: 'evt.feeds.feed_refreshed',
   // Indicates a single feed has been updated and cached
   FEED_UPDATED: 'evt.feeds.feed_updated',
   FEED_MONITOR_INITIALIZED: 'evt.feeds.feed_monitor_initialized',

@@ -7,10 +7,7 @@ import { ApplicationService } from '../../types/application.js';
  * 
  */
 export class FeedService extends ApplicationService {
-    #cache;
-    #currentStrategy;
     #events;
-    #feedProvider;
     #sandbox;
     #logger;
     #DEFAULT_TTL_MILLIS = 180000;
@@ -19,104 +16,64 @@ export class FeedService extends ApplicationService {
      * @param {Object} sandbox
      * @param {Object} sandbox.core
      * @param {Object} sandbox.my
-     * @param {MemoryCache} sandbox.my.Cache
      * @param {Object} sandbox.my.Events
      * @param {Object} sandbox.my.FeedProvider
      */
     constructor(sandbox) {
       super();
-      this.#cache = sandbox.my.Cache;
       this.#events = sandbox.my.Events;
-      this.#feedProvider = sandbox.my.FeedProvider;
       this.#logger = sandbox.core.logger.getLoggerInstance();
       this.#sandbox = sandbox;
-    }
-  
-    /**
-     * @param {Object} strategy
-     * @returns {void}
-     */
-    setStrategy(strategy) {
-      if (!strategy) {
-        this.#logger.error(
-          `INTERNAL_ERROR (RSSFeedService): Cannot set strategy (${strategy}) See details -> Strategy missing or undefined`
-        );
-        return;
-      }
-      this.#currentStrategy = strategy;
     }
   
     /**
      * @returns {Object}
      */
     async getFeed() {
-      if (!this.#currentStrategy) {
+      try {
+        const response = await fetch(`${this.#sandbox.my.Config.vars.BACKEND_URL}/feeds/17ef5a1f-f61b-4de0-90fd-408321f21072`);
+        const body =  await response.json();
+
+        return {
+          etag: response.headers.get('ETag'),
+          data: body
+        }
+      } catch(ex) {
         this.#logger.error(
-          `INTERNAL_ERROR (FeedService): Cannot get feed. See details => No feed strategy is set`
+          `INTERNAL_ERROR (FeedService): Exception encountered while fetching feed. See details => ${ex.message}`
         );
-        return;
       }
-      return this.#currentStrategy.getFeed();
     }
   
     /**
      * @returns {void}
      */
     async refresh() {
-      Object.entries(this.#feedProvider).forEach(
-        async ([feedName, feedConfig], idx, array) => {
-          try {
-            if (!feedName) {
-              return;
-            }
-            const LAST_REFRESH_MILLIS =
-              (await this.#cache.get(`feed.${feedName}.lastRefresh`)) || 0;
-            
-            const TIMESTAMP_MILLIS = new Date().getTime();
-            const ELAPSED_TIME_MILLIS = TIMESTAMP_MILLIS - LAST_REFRESH_MILLIS;
-            const TTL = feedConfig?.TTL || this.#DEFAULT_TTL_MILLIS;
-  
-            if (ELAPSED_TIME_MILLIS > TTL && feedConfig.refreshType === 'pull') {
-              console.log({feedName})
+      try {
+        
+        const feedResult = await this.getFeed();
+        //this.#logger.log(feedResult);
 
-              this.setStrategy(this.#feedProvider[feedName]);
-  
-              const feed = await this.getFeed();
-  
-              this.#logger.log(feed);
-  
-              if (!feed) {
-                this.#logger.info(
-                  `INFO (FeedService): Could not get feed (${feedName}). See details -> getFeed request returned undefined. Check feed configuration.`
-                );
-                return;
-              }
-              const stringifiedFeed = JSON.stringify(feed);
-              const key = `feed.${feedName}.${this.#sandbox.core.createHash(stringifiedFeed)}`;
-  
-              await this.#cache.set({
-                key,
-                value: stringifiedFeed,
-              });
-  
-              this.#events.dispatchEvent(
-                new SystemEvent(Events.FEED_UPDATED, {
-                  key,
-                  feedName,
-                })
-              );
-            }
-          } catch (ex) {
-            this.#logger.error(
-              `INTERNAL_ERROR (FeedService): Exception encountered while refreshing (${feedName}) feed. See details -> ${ex.message}`
-            );
-          }
+        // if (this.#validateFeed(feedResult))
+        if (!feedResult) {
+          this.#logger.info(
+            `INFO (FeedService): Could not validate user feed. See details -> (VALIDATION FAILURE DETAILS)`
+          );
+          return;
         }
-      );
-
-      this.#events.dispatchEvent(
-        new SystemEvent(Events.FEEDS_REFRESHED)
-      );
+        
+        const key = 'com.current.ly.feed';
+        this.#events.dispatchEvent(
+          new SystemEvent(Events.FEED_REFRESHED, {
+            etag: feedResult.etag,
+            feed: feedResult.data,
+          })
+        );
+      } catch (ex) {
+        this.#logger.error(
+          `INTERNAL_ERROR (FeedService): Exception encountered while refreshing feed. See details -> ${ex.message}`
+        );
+      }
     }
 }
 
@@ -148,7 +105,6 @@ export class FeedMonitor extends ApplicationService {
         start: true,
         timeZone: 'America/Los_Angeles',
       });
-      this.#logger.info('INFO (FeedMonitor): Feed monitor initialized');
       this.#events.dispatchEvent(
         new SystemEvent(Events.FEED_MONITOR_INITIALIZED)
       );

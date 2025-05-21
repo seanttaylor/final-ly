@@ -15,7 +15,8 @@ export class FeedRouter {
      * Returns a unique user feed
      */
     router.get('/feeds/:id', (req, res) => {
-      
+      res.set('Access-Control-Expose-Headers', 'ETag');
+
       res.json({
         count: 1, // the count of items in the feed
         items: [{ }],
