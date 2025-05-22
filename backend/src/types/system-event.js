@@ -8,15 +8,14 @@ import { randomUUID } from 'node:crypto';
  */
 export const Events = Object.freeze({
   APP_INITIALIZED: 'evt.system.app_initialized',
+  // Indicates the training data sink has been loaded successfully
+  DATA_SINK_LOADED: 'evt.ml.training.data_sink_loaded',
   // Indicates all subscribed feeds have been refreshed
   FEEDS_REFRESHED: 'evt.feeds.feeds_refreshed',
   // Indicates a single feed has been updated and cached
   FEED_UPDATED: 'evt.feeds.feed_updated',
   FEED_MONITOR_INITIALIZED: 'evt.feeds.feed_monitor_initialized',
-  /*
-  * @property
-  * Indicates the currently-feed component has been initialized
-  */
+  // Indicates the currently-feed component has been initialized
   FEED_COMPONENT_INITIALIZED: 'evt.ui.components.feed_initialized'
 });
 

@@ -57,6 +57,9 @@ new Sandbox(MY_SERVICES, async function(box) {
 
     box.my.Events.addEventListener(Events.FEEDS_REFRESHED, wrapAsyncEventHandler(onFeedsRefreshed));
     box.my.Events.addEventListener(Events.FEED_UPDATED, wrapAsyncEventHandler(onFeedUpdate));
+    box.my.Events.addEventListener(Events.DATA_SINK_LOADED, ({ detail: event }) => {
+      console.log(event);
+    });
     
     box.my.HTTPService.start();
 
@@ -129,7 +132,7 @@ new Sandbox(MY_SERVICES, async function(box) {
             value: JSON.stringify(canonicalizedFeed)
           });
 
-          await box.my.MLService.DataSink.push({ bucket: 'training/raw/feeds', data: canonicalizedFeed });
+          await box.my.MLService.DataSink.push({ bucketPath: 'training/raw/feeds', data: canonicalizedFeed });
           return;
         }
         console.info(

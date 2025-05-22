@@ -14,6 +14,13 @@ export class StatusRouter {
     /**
      * Returns the application status
      */
+    router.get('/', (req, res) => {
+      res.status(204).send();
+    });
+
+    /**
+     * Returns the application status
+     */
     router.get('/status', (req, res) => {
       
       res.json({

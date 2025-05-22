@@ -1,12 +1,15 @@
+import path from 'path';
 import { ApplicationService } from '../../types/application.js';
-import { SystemEvent, Events } from '../../types/system-event.js';
+import { JSONDataSink } from './json-data-sink.js';
 
 /**
- * This service is just used as a sanity check to ensure the module system is working
+ * 
  */
 export class MLService extends ApplicationService {
+  #events;
   #logger;
   #sandbox;
+
 
   /**
    * @param {ISandbox} sandbox
@@ -14,21 +17,16 @@ export class MLService extends ApplicationService {
   constructor(sandbox) {
     super();
     this.#sandbox = sandbox;
-    this.#logger = sandbox.core.logger.getLoggerInstance();
+    this.#events = sandbox.my.Events;
+    this.#logger = sandbox.core.logger.getLoggerInstance();   
+    
+    const SINK_FILE_PATH = path.join(path.dirname(new URL(import.meta.url).pathname), 'sink.json');
 
-    this.DataSink = {
-        /**
-         * Stages data to a specified sink for later processing typically for model training
-         * @param {Object} options
-         * @param {String} options.bucket - identifier for a data sink
-         * @param {Object} options.data
-         * @returns {Promise<void>} 
-         */
-        async push({ bucket, data }) {
-            console.log(`Pushing data to bucket ${bucket}`);
-            console.log({ bucket, data });
-        }   
-    };
+    this.DataSink = new JSONDataSink({
+      SINK_FILE_PATH,
+      events: this.#events,
+      logger: this.#logger,
+    })
   }
   
 }
