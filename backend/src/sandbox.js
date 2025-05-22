@@ -52,7 +52,7 @@ export class Sandbox extends EventTarget {
                 sandbox.my[`__${moduleName}`] = factory(); // Create module lazily
               } catch (ex) {
                 console.error(
-                  `INTERNAL_ERROR (sandbox): Could not create module (${moduleName}); ensure this module is registered via Sandbox.modules.of. See details -> ${ex.message}`
+                  `INTERNAL_ERROR (sandbox): Could not create module (${moduleName}); ensure this module is registered via Sandbox.modules.of() and that it is INITIALIZED See details -> ${ex.message}`
                 );
               }
             }

@@ -10,6 +10,7 @@ export const core = [
     'FeedMonitor',
     'FeedService',
     'HTTPService',
+    'MLService',
     'NOOPService',
     'RouteService',
   ];

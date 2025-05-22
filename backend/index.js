@@ -18,10 +18,11 @@ import { RouteService } from './src/services/routers/index.js';
 import { FeedService, FeedMonitor } from './src/services/feed/index.js';
 
 import { FeedProvider} from './src/services/feed/provider/index.js';
-import { NOOPService } from './src/services/noop/index.js';
 import { MemoryCache } from './src/services/cache/memory.js';
+import { NOOPService } from './src/services/noop/index.js';
 import { PatchProvider } from './src/services/feed/provider/index.js';
 
+import { MLService } from './src/services/ml/index.js';
 import { Xevents } from './src/services/event/index.js';
 
 Sandbox.modules.of('HTTPService', HTTPService);
@@ -34,6 +35,7 @@ Sandbox.modules.of('Cache', MemoryCache);
 Sandbox.modules.of('FeedService', FeedService);
 Sandbox.modules.of('FeedMonitor', FeedMonitor);
 
+Sandbox.modules.of('MLService', MLService);
 Sandbox.modules.of('NOOPService', NOOPService);
 Sandbox.modules.of('PatchProvider', PatchProvider);
 
@@ -51,6 +53,7 @@ new Sandbox(MY_SERVICES, async function(box) {
     console.log(`${APP_NAME} v${APP_VERSION}`);
     console.log(box.my.NOOPService.status);
     console.log(box.my.FeedMonitor.status);
+    console.log(box.my.MLService.status);
 
     box.my.Events.addEventListener(Events.FEEDS_REFRESHED, wrapAsyncEventHandler(onFeedsRefreshed));
     box.my.Events.addEventListener(Events.FEED_UPDATED, wrapAsyncEventHandler(onFeedUpdate));
@@ -119,13 +122,14 @@ new Sandbox(MY_SERVICES, async function(box) {
             items: feedItems,
           };
 
-          console.log({ canonicalizedFeed });
+          //console.log({ canonicalizedFeed });
 
           await box.my.Cache.set({
             key: `feed.${feedName}.canonical`,
             value: JSON.stringify(canonicalizedFeed)
           });
 
+          await box.my.MLService.DataSink.push({ bucket: 'training/raw/feeds', data: canonicalizedFeed });
           return;
         }
         console.info(
@@ -146,7 +150,7 @@ new Sandbox(MY_SERVICES, async function(box) {
       setTimeout(async () => {
         console.log(event);
         // get recently updated canonicalized feeds
-        console.log(box.my.Cache.keys())
+        //console.log(box.my.Cache.keys())
         const updatedFeedNames = box.my.Cache.keys().filter((k) => k.includes('canonical'));
         const updatedFeeds = updatedFeedNames.map(async (key) => {
           return JSON.parse(await box.my.Cache.get(key));
