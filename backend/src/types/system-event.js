@@ -16,7 +16,9 @@ export const Events = Object.freeze({
   FEED_UPDATED: 'evt.feeds.feed_updated',
   FEED_MONITOR_INITIALIZED: 'evt.feeds.feed_monitor_initialized',
   // Indicates the currently-feed component has been initialized
-  FEED_COMPONENT_INITIALIZED: 'evt.ui.components.feed_initialized'
+  FEED_COMPONENT_INITIALIZED: 'evt.ui.components.feed_initialized',
+  // Indicates a processing pipeline has completed for a training data set
+  PIPELINE_FINISHED: 'evt.ml.pipeline_finished'
 });
 
 /**

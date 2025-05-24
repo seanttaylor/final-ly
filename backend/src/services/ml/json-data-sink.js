@@ -28,7 +28,7 @@ export class JSONDataSink {
     /**
      * Stages data to a specified sink for later processing typically for model training
      * @param {Object} options
-     * @param {String} options.bucketPath - identifier for a data sink
+     * @param {String} options.bucketPath - JSON Pointer path to a bucket in the sink data
      * @param {Object} options.data
      * @returns {Promise<void>} 
      */
@@ -36,7 +36,6 @@ export class JSONDataSink {
       const path = bucketPath.startsWith('/') ? bucketPath : `/${bucketPath}`;
 
       try {
-
         // Get current bucket at path or create new one
         let bucket = JSONPointer.get(this.#sinkData, path);
         if (!Array.isArray(bucket)) {
@@ -45,7 +44,7 @@ export class JSONDataSink {
           JSONPointer.set(this.#sinkData, path, bucket);
         }
     
-        bucket.push(data.items);
+        bucket.push(...data.items);
 
         await fs.writeFile(
           this.#SINK_FILE_PATH,
@@ -54,6 +53,21 @@ export class JSONDataSink {
         );
       } catch(ex) {
         this.#logger.error(`INTERNAL_ERROR (MLService.DataSink): Exception encountered while pushing data to sink (${path}). See details ->`, ex.message);
+      }
+    }
+
+    /**
+     * Returns a specfied bucket in the data sink
+     * @param {String} bucketPath
+     * @returns {Promise<Object[]>} 
+     */
+    async pull(bucketPath) {
+      try {
+        const path = bucketPath.startsWith('/') ? bucketPath : `/${bucketPath}`;
+        const result = JSONPointer.get(this.#sinkData, path);
+        return result;
+      } catch (ex) {
+        this.#logger.error(`INTERNAL_ERROR (MLService.DataSink): Failed to pull data from path (${bucketPath}) See details -> ${ex.message}`);
       }
     }
     
@@ -67,7 +81,7 @@ export class JSONDataSink {
         this.#events.dispatchEvent(new SystemEvent(Events.DATA_SINK_LOADED));
         } catch (ex) {
             if (ex.code === 'ENOENT') {
-                this.#logger.warn(`WARNING (MLService): Sink file not found at path (${this.#SINK_FILE_PATH})`);
+                this.#logger.warn(`WARNING (MLService.DataSink): Sink file not found at path (${this.#SINK_FILE_PATH})`);
             } else {
                 throw ex;
             }

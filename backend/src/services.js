@@ -2,7 +2,8 @@
 export const core = [
     'Cache', 
     'Config',
-    'Events'
+    'Events',
+    'UtilityService'
   ];
   
   // Main services that contain the application business logic

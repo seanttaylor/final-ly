@@ -23,6 +23,7 @@ import { NOOPService } from './src/services/noop/index.js';
 import { PatchProvider } from './src/services/feed/provider/index.js';
 
 import { MLService } from './src/services/ml/index.js';
+import { UtilityService } from './src/services/utils.js';
 import { Xevents } from './src/services/event/index.js';
 
 Sandbox.modules.of('HTTPService', HTTPService);
@@ -38,6 +39,7 @@ Sandbox.modules.of('FeedMonitor', FeedMonitor);
 Sandbox.modules.of('MLService', MLService);
 Sandbox.modules.of('NOOPService', NOOPService);
 Sandbox.modules.of('PatchProvider', PatchProvider);
+Sandbox.modules.of('UtilityService', UtilityService);
 
 const APP_NAME = 'com.current.ly.backend';
 const APP_VERSION = '0.0.1';
@@ -52,12 +54,16 @@ new Sandbox(MY_SERVICES, async function(box) {
   try {
     console.log(`${APP_NAME} v${APP_VERSION}`);
     console.log(box.my.NOOPService.status);
-    console.log(box.my.FeedMonitor.status);
+    //console.log(box.my.FeedMonitor.status);
     console.log(box.my.MLService.status);
 
     box.my.Events.addEventListener(Events.FEEDS_REFRESHED, wrapAsyncEventHandler(onFeedsRefreshed));
     box.my.Events.addEventListener(Events.FEED_UPDATED, wrapAsyncEventHandler(onFeedUpdate));
     box.my.Events.addEventListener(Events.DATA_SINK_LOADED, ({ detail: event }) => {
+      console.log(event);
+    });
+
+    box.my.Events.addEventListener(Events.PIPELINE_FINISHED, ({ detail: event }) => {
       console.log(event);
     });
     
