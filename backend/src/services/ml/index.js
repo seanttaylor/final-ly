@@ -4,6 +4,8 @@ import { stripHtml } from 'string-strip-html';
 import { ApplicationService } from '../../types/application.js';
 import { JSONDataSink } from './json-data-sink.js';
 import { SystemEvent, Events } from '../../types/system-event.js';
+import { SinkValidationProvider } from './sink-validation-provider.js';
+import e from 'express';
 
 /**
  * 
@@ -32,10 +34,18 @@ export class MLService extends ApplicationService {
     });
 
     const EVERY_24_HRS = '*/2 * * * *';
+    const EVERY_36_HRS = '*/5 * * * *';
+
+    // CronJob.from({
+    //   cronTime: EVERY_24_HRS,
+    //   onTick: this.#onScheduledDataPull.bind(this),
+    //   start: true,
+    //   timeZone: 'America/Los_Angeles',
+    // });
 
     CronJob.from({
-      cronTime: EVERY_24_HRS,
-      onTick: this.#onScheduledDataPull.bind(this),
+      cronTime: EVERY_36_HRS,
+      onTick: this.#onScheduledLabelValidation.bind(this),
       start: true,
       timeZone: 'America/Los_Angeles',
     });
@@ -48,7 +58,7 @@ export class MLService extends ApplicationService {
     try {
       // NEED TO LABEL **BEFORE** VECTORIZING
       // LET VECTORIZING HAPPEN JUST BEFORE TRAINING
-      const rawData = await this.DataSink.pull('/training/raw/feeds');
+      const rawData = (await this.DataSink.pull('/training/raw/feeds')).slice(this.#LAST_INDEX_PROCESSED)
       const preProcessingPipeline = new this.#sandbox.my.UtilityService.SyncPipeline([
         (feedItem) => this.#stripHTML(feedItem.description),
         (text) => this.#summarize({ text }),
@@ -62,11 +72,39 @@ export class MLService extends ApplicationService {
       await this.DataSink.push({ bucketPath: '/training/label_required/feeds', data: { items: trainingData }});
       this.#events.dispatchEvent(new SystemEvent(Events.PIPELINE_FINISHED, {
         name: 'feed_categorization_preprocessing',
-        rel: 'ready_for_labeling',
         bucket: '/training/label_required/feeds'
+      }, 
+      {        
+        rel: 'ready_for_labeling',
       }));
     } catch(ex) {
       this.#logger.error(`INTERNAL_ERROR (MlService): Exception encountered during scheduled data pull. See details -> ${ex.message}`);
+    }
+  }
+
+  /**
+   * Ensures any data in the `label_required` data sink has been appropriately labeled
+   */
+  async #onScheduledLabelValidation() {
+    try {
+      const labelRequiredData = await this.DataSink.pull('/training/label_required');
+
+      Object.entries(labelRequiredData).forEach(([sinkName, sink]) => {
+        const [valid, errors] = SinkValidationProvider.label_required[sinkName].validate(sink);
+        if (!valid) {
+          this.#logger.error(errors);
+          throw new Error(`Validation failure on sink item in (${sinkName}) data sink. Ensure all data in the label_required sink is labeled and valid per the schema. See above `);
+        }
+        this.#events.dispatchEvent(new SystemEvent(Events.DATA_SINK_LABELING_VALIDATED, {
+          bucket: `/training/label_required/${sinkName}`
+        },
+        {
+          rel: 'ready_for_training'
+        }
+      ))
+      });
+    } catch(ex) {
+      this.#logger.error(`INTERNAL_ERROR (MlService): Exception encountered during scheduled label validation. See details -> ${ex.message}`);
     }
   }
 

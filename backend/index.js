@@ -66,6 +66,10 @@ new Sandbox(MY_SERVICES, async function(box) {
     box.my.Events.addEventListener(Events.PIPELINE_FINISHED, ({ detail: event }) => {
       console.log(event);
     });
+
+    box.my.Events.addEventListener(Events.DATA_SINK_LABELING_VALIDATED, ({ detail: event }) => {
+      console.log(event);
+    });
     
     box.my.HTTPService.start();
 
