@@ -69,6 +69,9 @@ new Sandbox(MY_SERVICES, async function(box) {
 
     box.my.Events.addEventListener(Events.DATA_SINK_LABELING_VALIDATED, ({ detail: event }) => {
       console.log(event);
+      const { header, payload: { bucket } } = event;
+
+      box.my.MLService.train({ bucketName: bucket });
     });
     
     box.my.HTTPService.start();

@@ -1,11 +1,12 @@
 import { CronJob } from 'cron';
 import path from 'path';
 import { stripHtml } from 'string-strip-html';
+import ml5 from 'ml5';
+
 import { ApplicationService } from '../../types/application.js';
 import { JSONDataSink } from './json-data-sink.js';
 import { SystemEvent, Events } from '../../types/system-event.js';
 import { SinkValidationProvider } from './sink-validation-provider.js';
-import e from 'express';
 
 /**
  * 
@@ -33,8 +34,8 @@ export class MLService extends ApplicationService {
       logger: this.#logger,
     });
 
-    const EVERY_24_HRS = '*/2 * * * *';
-    const EVERY_36_HRS = '*/5 * * * *';
+    const EVERY_24_HRS = '*/5 * * * *';
+    const EVERY_36_HRS = '*/7 * * * *';
 
     // CronJob.from({
     //   cronTime: EVERY_24_HRS,
@@ -93,7 +94,7 @@ export class MLService extends ApplicationService {
         const [valid, errors] = SinkValidationProvider.label_required[sinkName].validate(sink);
         if (!valid) {
           this.#logger.error(errors);
-          throw new Error(`Validation failure on sink item in (${sinkName}) data sink. Ensure all data in the label_required sink is labeled and valid per the schema. See above `);
+          throw new Error(`Validation failure on training item in (/training/label_required/${sinkName}) data sink. Ensure all data in the label_required sink is labeled and valid per the schema. See any additional errors above.`);
         }
         this.#events.dispatchEvent(new SystemEvent(Events.DATA_SINK_LABELING_VALIDATED, {
           bucket: `/training/label_required/${sinkName}`
@@ -119,6 +120,33 @@ export class MLService extends ApplicationService {
       text,
       label: null
     }
+  }
+
+  /**
+   * Starts a ML training job
+   * @param {String} bucketName - the data sink bucket from which to pull *labeled* training data 
+   * @returns {Object}
+   */
+  train({ bucketName }) {
+    const options = {
+      task: 'classification',
+      debug: true,
+      inputs: 100,
+      outputs: ['label'],
+    };
+
+    ml5.setBackend('cpu'); // Or 'webgl' for GPU fallback
+
+    ml5.neuralNetwork(options, once(this.#onBootstrapNeuralNet));
+
+    this.#logger.log(`INFO (MLService): ML training in progress on bucket (${bucketName})`);
+  }
+
+  /**
+   * @param {Object} nn
+   */
+  #onBootstrapNeuralNet(nn) {
+    this.#logger.log('NEURAL NETWORK INITIALIZED', nn);
   }
 
   /**
