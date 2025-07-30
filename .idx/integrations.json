@@ -6,5 +6,6 @@
     "region": "us-central1",
     "sourceFlag": "--source ./backend",
     "allowUnauthenticatedInvocationsFlag": "--allow-unauthenticated"
-  }
+  },
+  "secrets_manager": {}
 }

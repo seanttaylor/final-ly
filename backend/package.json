@@ -14,6 +14,7 @@
   "author": "Sean T Taylor",
   "license": "ISC",
   "dependencies": {
+    "@supabase/supabase-js": "^2.53.0",
     "ajv": "^8.17.1",
     "cors": "^2.8.5",
     "cron": "^4.3.0",

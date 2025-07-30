@@ -40,9 +40,9 @@ export const SinkValidationProvider = {
              * 
              */
             validate(sink) {
-                const result = Boolean(ajv.validate(FEED_SCHEMA, sink));
-                return [ result, ajv.errors ];
-            }
+              const result = Boolean(ajv.validate(FEED_SCHEMA, sink));
+              return [ result, ajv.errors ];
+          }
         }
     }
 };

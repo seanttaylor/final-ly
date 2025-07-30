@@ -22,6 +22,7 @@ import { MemoryCache } from './src/services/cache/memory.js';
 import { NOOPService } from './src/services/noop/index.js';
 import { PatchProvider } from './src/services/feed/provider/index.js';
 
+import { Database } from './src/services/db/index.js';
 import { MLService } from './src/services/ml/index.js';
 import { UtilityService } from './src/services/utils.js';
 import { Xevents } from './src/services/event/index.js';
@@ -41,6 +42,8 @@ Sandbox.modules.of('NOOPService', NOOPService);
 Sandbox.modules.of('PatchProvider', PatchProvider);
 Sandbox.modules.of('UtilityService', UtilityService);
 
+Sandbox.modules.of('Database', Database);
+
 const APP_NAME = 'com.current.ly.backend';
 const APP_VERSION = '0.0.1';
 const GLOBALS = {
@@ -56,22 +59,17 @@ new Sandbox(MY_SERVICES, async function(box) {
     console.log(box.my.NOOPService.status);
     //console.log(box.my.FeedMonitor.status);
     console.log(box.my.MLService.status);
+    console.log(box.my.Database.status);
 
     box.my.Events.addEventListener(Events.FEEDS_REFRESHED, wrapAsyncEventHandler(onFeedsRefreshed));
     box.my.Events.addEventListener(Events.FEED_UPDATED, wrapAsyncEventHandler(onFeedUpdate));
+    box.my.Events.addEventListener(Events.DATA_SINK_LABELING_VALIDATED, wrapAsyncEventHandler(onLabelingValidated));
     box.my.Events.addEventListener(Events.DATA_SINK_LOADED, ({ detail: event }) => {
       console.log(event);
     });
 
     box.my.Events.addEventListener(Events.PIPELINE_FINISHED, ({ detail: event }) => {
       console.log(event);
-    });
-
-    box.my.Events.addEventListener(Events.DATA_SINK_LABELING_VALIDATED, ({ detail: event }) => {
-      console.log(event);
-      const { header, payload: { bucket } } = event;
-
-      box.my.MLService.train({ bucketName: bucket });
     });
     
     box.my.HTTPService.start();
@@ -93,6 +91,19 @@ new Sandbox(MY_SERVICES, async function(box) {
           );
         }
       };
+    }
+
+    /**
+     * Fires when all staged training data items have been validated (i.e. all have valid labels)
+     * @param {IEvent<Object>} event
+     */
+    async function onLabelingValidated(event) {
+      console.log(event);
+      const { header, payload: { bucket } } = event;
+
+      // We won't do training in this service; instead we'll just convert training data to a CSV and then push to storage bucket
+      // const labeledSinkData = await box.my.MLService.DataSink.pull(bucket);
+      // 
     }
 
     /**

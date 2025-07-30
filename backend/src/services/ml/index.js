@@ -1,10 +1,10 @@
 import { CronJob } from 'cron';
 import path from 'path';
 import { stripHtml } from 'string-strip-html';
-import ml5 from 'ml5';
 
 import { ApplicationService } from '../../types/application.js';
 import { JSONDataSink } from './json-data-sink.js';
+import { ObjectDataSink } from './object-data-sink.js';
 import { SystemEvent, Events } from '../../types/system-event.js';
 import { SinkValidationProvider } from './sink-validation-provider.js';
 
@@ -12,6 +12,7 @@ import { SinkValidationProvider } from './sink-validation-provider.js';
  * 
  */
 export class MLService extends ApplicationService {
+  #dbClient;
   #events;
   #logger;
   #sandbox;
@@ -24,12 +25,21 @@ export class MLService extends ApplicationService {
     super();
     this.#sandbox = sandbox;
     this.#events = sandbox.my.Events;
-    this.#logger = sandbox.core.logger.getLoggerInstance();   
+    this.#logger = sandbox.core.logger.getLoggerInstance(); 
+    this.#dbClient = sandbox.my.Database.getClient();  
     
     const SINK_FILE_PATH = path.join(path.dirname(new URL(import.meta.url).pathname), 'sink.json');
+    const OBJECT_DATA_SINK_FILE_PATH = sandbox.my.Config.vars.OBJECT_DATA_SINK_FILE_PATH;
 
     this.DataSink = new JSONDataSink({
       SINK_FILE_PATH,
+      events: this.#events,
+      logger: this.#logger,
+    });
+
+    this.RemoteDataSink = new ObjectDataSink({
+      SINK_FILE_PATH: OBJECT_DATA_SINK_FILE_PATH,
+      client: this.#dbClient,
       events: this.#events,
       logger: this.#logger,
     });

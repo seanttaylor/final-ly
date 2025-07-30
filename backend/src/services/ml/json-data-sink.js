@@ -21,7 +21,7 @@ export class JSONDataSink {
 
          // Initialize existing sink data
         this.#loadSinkData().catch(ex => {
-            this.#logger.error('INTERNAL_(ERROR (MLService): Exception encountered while loading sink data. See details ->', ex.message);
+          this.#logger.error('INTERNAL_(ERROR (MLService): Exception encountered while loading sink data. See details ->', ex.message);
         });
     }
 
@@ -78,7 +78,9 @@ export class JSONDataSink {
         try {
         const data = await fs.readFile(this.#SINK_FILE_PATH, 'utf-8');
         this.#sinkData = JSON.parse(data);
-        this.#events.dispatchEvent(new SystemEvent(Events.DATA_SINK_LOADED));
+        this.#events.dispatchEvent(new SystemEvent(Events.DATA_SINK_LOADED, {
+            bucketPath: this.#SINK_FILE_PATH
+        }));
         } catch (ex) {
             if (ex.code === 'ENOENT') {
                 this.#logger.warn(`WARNING (MLService.DataSink): Sink file not found at path (${this.#SINK_FILE_PATH})`);
