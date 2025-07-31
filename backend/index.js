@@ -58,28 +58,24 @@ new Sandbox(MY_SERVICES, async function(box) {
   try {
     console.log(`${APP_NAME} v${APP_VERSION}`);
     console.log(box.my.NOOPService.status);
-    //console.log(box.my.FeedMonitor.status);
+    console.log(box.my.FeedMonitor.status);
+    
     console.log(box.my.MLService.status);
     console.log(box.my.Database.status);
 
     box.my.Events.addEventListener(Events.FEEDS_REFRESHED, wrapAsyncEventHandler(onFeedsRefreshed));
     box.my.Events.addEventListener(Events.FEED_UPDATED, wrapAsyncEventHandler(onFeedUpdate));
     box.my.Events.addEventListener(Events.DATA_SINK_LABELING_VALIDATED, wrapAsyncEventHandler(onLabelingValidated));
-    box.my.Events.addEventListener(Events.DATA_SINK_LOADED, ({ detail: event }) => {
-      console.log(event);
-    });
-
-    box.my.Events.addEventListener(Events.PIPELINE_FINISHED, ({ detail: event }) => {
-      console.log(event);
-    });
-
-    box.my.Events.addEventListener(Events.TRAINING_DATA_UPLOADED, ({ detail: event }) => {
-      console.log(event);
-    });
-
-    box.my.Events.dispatchEvent(new SystemEvent(Events.DATA_SINK_LOADED))
+    
+    box.my.Events.addEventListener(Events.DATA_SINK_LOADED, logEvent);
+    box.my.Events.addEventListener(Events.PIPELINE_FINISHED, logEvent);
+    box.my.Events.addEventListener(Events.TRAINING_DATA_UPLOADED, logEvent);
     
     box.my.HTTPService.start();
+
+    function logEvent({ detail: event }) {
+      console.log(event);
+    }
 
     /**
      * Wraps async functions used as handlers for an
@@ -136,7 +132,7 @@ new Sandbox(MY_SERVICES, async function(box) {
         if (box.my.PatchProvider[feedName]) {
           const cachedRecord = await box.my.Cache.get(payload.key);
           const feed = JSON.parse(cachedRecord);
-
+          
           const feedItems = feed.rss.channel.item.map((item) => {
             let patchSchema;
             try {
@@ -152,7 +148,7 @@ new Sandbox(MY_SERVICES, async function(box) {
 
               return patchedItem;
             } catch (ex) {
-              console.error(`INTERNAL_ERROR (Main): Exception encountered while patching feed item in (${feedName}) feed. See details -> ${ex.message}`
+              console.error(`INTERNAL_ERROR (Main): Exception encountered while patching feed item in (${feedName}) feed. **ENSURE A JSON PATCH SPEC IS AVAILABLE** for this feed in PatchProvider. See details -> ${ex.message}`
               );
               return;
             }

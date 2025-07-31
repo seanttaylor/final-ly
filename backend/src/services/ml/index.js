@@ -49,12 +49,12 @@ export class MLService extends ApplicationService {
     const EVERY_24_HRS = '*/5 * * * *';
     const EVERY_36_HRS = '*/7 * * * *';
 
-    // CronJob.from({
-    //   cronTime: EVERY_24_HRS,
-    //   onTick: this.#onScheduledDataPull.bind(this),
-    //   start: true,
-    //   timeZone: 'America/Los_Angeles',
-    // });
+    CronJob.from({
+      cronTime: EVERY_24_HRS,
+      onTick: this.#onScheduledDataPull.bind(this),
+      start: true,
+      timeZone: 'America/Los_Angeles',
+    });
 
     CronJob.from({
       cronTime: EVERY_36_HRS,
@@ -65,12 +65,10 @@ export class MLService extends ApplicationService {
   }
 
   /**
-   * Pulls raw data from the data sink 
+   * Pulls raw data from the local JSON file data sink 
    */
   async #onScheduledDataPull() {
     try {
-      // NEED TO LABEL **BEFORE** VECTORIZING
-      // LET VECTORIZING HAPPEN JUST BEFORE TRAINING
       const rawData = (await this.DataSink.pull('/training/raw/feeds')).slice(this.#LAST_INDEX_PROCESSED)
       const preProcessingPipeline = new this.#sandbox.my.UtilityService.SyncPipeline([
         (feedItem) => this.#stripHTML(feedItem.description),
@@ -133,48 +131,6 @@ export class MLService extends ApplicationService {
       text,
       label: null
     }
-  }
-
-  /**
-   * Starts a ML training job
-   * @param {String} bucketName - the data sink bucket from which to pull *labeled* training data 
-   * @returns {Object}
-   */
-  train({ bucketName }) {
-    const options = {
-      task: 'classification',
-      debug: true,
-      inputs: 100,
-      outputs: ['label'],
-    };
-
-    ml5.setBackend('cpu'); // Or 'webgl' for GPU fallback
-
-    ml5.neuralNetwork(options, once(this.#onBootstrapNeuralNet));
-
-    this.#logger.log(`INFO (MLService): ML training in progress on bucket (${bucketName})`);
-  }
-
-  /**
-   * @param {Object} nn
-   */
-  #onBootstrapNeuralNet(nn) {
-    this.#logger.log('NEURAL NETWORK INITIALIZED', nn);
-  }
-
-  /**
-   * Creates a vector embedding for the training process
-   * @param {String} text 
-   * @param {Number} size 
-   * @returns {Number[]}
-   */
-  #createVectorEmbedding(text, size = 100) {
-    const vector = Array(size).fill(0);
-    for (let i = 0; i < text.length; i++) {
-      const charCode = text.charCodeAt(i);
-      vector[i % size] += charCode / 255; // normalize ASCII
-    }
-    return vector;
   }
 
   /**

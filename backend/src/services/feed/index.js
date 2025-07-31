@@ -83,7 +83,7 @@ export class FeedService extends ApplicationService {
 
             const feed = await this.getFeed();
 
-            //this.#logger.log(feed);
+            this.#logger.log(feed);
 
             if (!feed) {
               this.#logger.info(

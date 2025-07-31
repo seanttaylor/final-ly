@@ -103,6 +103,30 @@ export class PatchProvider extends ApplicationService {
     super();
   }
 
+  arstechnica = [
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'copy', from: '/category', path: '/category' },
+    { op: 'copy', from: '/title', path: '/title' },
+    { op: 'copy', from: '/description', path: '/description' },
+    { op: 'copy', from: '/link', path: '/link' },
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/source', value: 'Arstechnica' },
+    { op: 'copy', from: '/media:content/url', path: '/thumbnail/url' },
+    { op: 'move', from: '/dc:creator', path: '/author' },
+    {
+      op: 'remove',
+      path: '/slash:comments',
+    },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    {
+      op: 'remove',
+      path: '/media:content',
+    },
+  ];
+  
   axios = [
     { op: 'add', path: '/thumbnail', value: { url: null } },
     { op: 'move', from: '/dc:creator', path: '/author' },

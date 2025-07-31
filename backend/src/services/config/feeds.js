@@ -4,11 +4,11 @@ export const Feeds = {
     //   URL: 'https://abcnews.go.com/abcnews/topstories',
     //   refreshType: 'pull',
     // },
-    // arstechnica: {
-    //   name: 'arstechnica',
-    //   URL: 'http://feeds.arstechnica.com/arstechnica/index/',
-    //   refreshType: 'pull',
-    // },
+    arstechnica: {
+      name: 'arstechnica',
+      URL: 'http://feeds.arstechnica.com/arstechnica/index/',
+      refreshType: 'pull',
+    },
     axios: {
       name: 'axios',
       URL: 'https://api.axios.com/feed/',

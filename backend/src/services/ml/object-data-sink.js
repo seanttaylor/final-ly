@@ -37,7 +37,7 @@ export class ObjectDataSink {
     async push({ file }) {
       try {     
         const path = this.#SINK_FILE_PATH.startsWith('/') ? this.#SINK_FILE_PATH : `/${this.#SINK_FILE_PATH }`;
-        const { error } = await this.#client.storage.from(this.#SINK_BUCKET_NAME).upload(path, file, {
+        const { error } = await this.#client.storage.from(this.#SINK_BUCKET_NAME).upload(`${path}/${file.name}`, file, {
           contentType: 'text/csv',
           upsert: true      
         });
