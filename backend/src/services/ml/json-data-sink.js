@@ -79,6 +79,7 @@ export class JSONDataSink {
         const data = await fs.readFile(this.#SINK_FILE_PATH, 'utf-8');
         this.#sinkData = JSON.parse(data);
         this.#events.dispatchEvent(new SystemEvent(Events.DATA_SINK_LOADED, {
+            bucketName: null,
             bucketPath: this.#SINK_FILE_PATH
         }));
         } catch (ex) {

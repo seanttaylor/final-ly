@@ -29,7 +29,8 @@ export class MLService extends ApplicationService {
     this.#dbClient = sandbox.my.Database.getClient();  
     
     const SINK_FILE_PATH = path.join(path.dirname(new URL(import.meta.url).pathname), 'sink.json');
-    const OBJECT_DATA_SINK_FILE_PATH = sandbox.my.Config.vars.OBJECT_DATA_SINK_FILE_PATH;
+    const OBJECT_DATA_SINK_BUCKET_NAME = sandbox.my.Config.vars.OBJECT_DATA_SINK_BUCKET_NAME;
+    const OBJECT_DATA_SINK_FEEDS_PATH = sandbox.my.Config.vars.OBJECT_DATA_SINK_FEEDS_PATH;
 
     this.DataSink = new JSONDataSink({
       SINK_FILE_PATH,
@@ -38,7 +39,8 @@ export class MLService extends ApplicationService {
     });
 
     this.RemoteDataSink = new ObjectDataSink({
-      SINK_FILE_PATH: OBJECT_DATA_SINK_FILE_PATH,
+      SINK_BUCKET_NAME: OBJECT_DATA_SINK_BUCKET_NAME,
+      SINK_FILE_PATH: OBJECT_DATA_SINK_FEEDS_PATH,
       client: this.#dbClient,
       events: this.#events,
       logger: this.#logger,
@@ -107,12 +109,13 @@ export class MLService extends ApplicationService {
           throw new Error(`Validation failure on training item in (/training/label_required/${sinkName}) data sink. Ensure all data in the label_required sink is labeled and valid per the schema. See any additional errors above.`);
         }
         this.#events.dispatchEvent(new SystemEvent(Events.DATA_SINK_LABELING_VALIDATED, {
-          bucket: `/training/label_required/${sinkName}`
-        },
-        {
-          rel: 'ready_for_training'
-        }
-      ))
+            bucket: `/training/label_required/${sinkName}`
+          },
+          {
+            rel: 'ready_for_upload',
+            description: 'Indicates the *local* file data sink containing the validated and labeled training data to be pushed to object storage'
+          }
+        ))
       });
     } catch(ex) {
       this.#logger.error(`INTERNAL_ERROR (MlService): Exception encountered during scheduled label validation. See details -> ${ex.message}`);

@@ -1,4 +1,5 @@
 import jsonpatch from 'fast-json-patch';
+import { json2csv } from 'json-2-csv'; 
 
 import { Sandbox } from './src/sandbox.js';
 import { SystemEvent, Events } from './src/types/system-event.js';
@@ -71,6 +72,12 @@ new Sandbox(MY_SERVICES, async function(box) {
     box.my.Events.addEventListener(Events.PIPELINE_FINISHED, ({ detail: event }) => {
       console.log(event);
     });
+
+    box.my.Events.addEventListener(Events.TRAINING_DATA_UPLOADED, ({ detail: event }) => {
+      console.log(event);
+    });
+
+    box.my.Events.dispatchEvent(new SystemEvent(Events.DATA_SINK_LOADED))
     
     box.my.HTTPService.start();
 
@@ -95,15 +102,22 @@ new Sandbox(MY_SERVICES, async function(box) {
 
     /**
      * Fires when all staged training data items have been validated (i.e. all have valid labels)
+     * and are ready to be pushed to object storage
      * @param {IEvent<Object>} event
      */
     async function onLabelingValidated(event) {
       console.log(event);
-      const { header, payload: { bucket } } = event;
+      const { payload: { bucket } } = event;
 
-      // We won't do training in this service; instead we'll just convert training data to a CSV and then push to storage bucket
-      // const labeledSinkData = await box.my.MLService.DataSink.pull(bucket);
-      // 
+      try {
+        // We won't do training in this service; instead we'll just convert training data to a CSV and then push to storage bucket
+        const labeledSinkData = await box.my.MLService.DataSink.pull(bucket);
+        const CSV_SINK_DATA = json2csv(labeledSinkData);
+        await box.my.MLService.RemoteDataSink.push({ file: new File([CSV_SINK_DATA], 'feed-categorization-training-data.csv', { type: 'text/csv' }) });
+
+      } catch(ex) {
+        console.error(`INTERNAL_ERROR (Main): Exception encountered while pushing labeled data to object storage. See details -> ${ex.message}`);
+      }
     }
 
     /**

@@ -12,10 +12,10 @@ export class Database extends ApplicationService {
     constructor(sandbox) {
         super();
         try {
-            const { SUPABASE_URL, SUPABASE_ANON_KEY } = sandbox.my.Config.keys;
+            const { SUPABASE_URL, SUPABASE_KEY } = sandbox.my.Config.keys;
             this.#sandbox = sandbox;
             this.#logger = sandbox.core.logger.getLoggerInstance();
-            this.#client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            this.#client = createClient(SUPABASE_URL, SUPABASE_KEY);
         } catch(ex) {
             this.#logger.log(`INTERNAL_ERROR (Database): Exception encountered during initialization. See details -> ${ex.message}`);
         }

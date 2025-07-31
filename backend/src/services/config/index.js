@@ -18,7 +18,7 @@ export class Configuration extends ApplicationService {
     get keys() {
         return {
             SUPABASE_URL: process.env.SUPABASE_URL,
-            SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY
+            SUPABASE_KEY: process.env.SUPABASE_KEY
         }
     }
 
@@ -30,7 +30,8 @@ export class Configuration extends ApplicationService {
             // Just Cors is a proxy which adds CORS headers to the proxied request. See https://justcors.com/ 
             JUST_CORS: 'https://justcors.com/tl_4b13949/',
             PORT: 8080,
-            OBJECT_DATA_SINK_FILE_PATH: '/training/categorization/feeds',
+            OBJECT_DATA_SINK_BUCKET_NAME: '/training',
+            OBJECT_DATA_SINK_FEEDS_PATH: '/categorization/feeds',
         };
     }
 
