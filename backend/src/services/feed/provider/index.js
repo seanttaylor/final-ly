@@ -145,4 +145,151 @@ export class PatchProvider extends ApplicationService {
     { op: 'remove', path: '/media:thumbnail' },
     { op: 'add', path: '/source', value: 'Axios' },
   ];
+
+  bbc = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'copy', from: '/media:thumbnail/url', path: '/thumbnail/url' },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    { op: 'remove', path: '/media:thumbnail' },
+    { op: 'add', path: '/source', value: 'BBC News' },
+  ]
+
+  economist = [
+    { op: 'add', path: '/author', value: null },
+    { op: 'add', path: '/html', value: null },
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    { op: 'add', path: '/source', value: 'The Economist' },
+  ]
+
+  mit_tech_review = [
+    {op: 'add', path: '/thumbnail', value: { url: null}},
+    { op: 'move', from: '/content:encoded', path: '/html' },
+    { op: 'move', from: '/dc:creator', path: '/author' },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    {
+      op: 'add',
+      path: '/source',
+      value: 'MIT Technology Review',
+    },
+    { op: 'remove', path: '/post-id' },
+  ];
+
+  npr = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/category', value: [] },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    {
+      op: 'remove',
+      path: '/image',
+    },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'add', path: '/source', value: 'NPR' },
+    { op: 'move', from: '/dc:creator', path: '/author' },
+    { op: 'move', from: '/content:encoded', path: '/html' },
+  ]
+
+  vanityfair = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'copy', from: '/media:thumbnail/url', path: '/thumbnail/url' },
+    { op: 'move', from: '/dc:creator', path: '/author' },
+    { op: 'add', path: '/source', value: 'Vanity Fair' },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    { op: 'remove', path: '/media:thumbnail' },
+    {
+      op: 'remove',
+      path: '/media:content',
+    },
+    {
+      op: 'remove',
+      path: '/media:keywords',
+    },
+    {
+      op: 'remove',
+      path: '/dc:publisher',
+    },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+  ]
+
+  wapo_world = [
+    { op: 'move', from: '/dc:creator', path: '/author' },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'add', path: '/source', value: 'The Washington Post' },
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/html', value: null }
+  ]
+
+  wired_top = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value: null },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'move', from: '/dc:creator', path: '/author' },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    {
+      op: 'remove',
+      path: '/media:content',
+    },
+    {
+      op: 'remove',
+      path: '/dc:publisher',
+    },
+    {
+      op: 'remove',
+      path: '/dc:subject',
+    },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    {
+      op: 'remove',
+      path: '/media:keywords',
+    },
+    { op: 'copy', from: '/media:thumbnail/url', path: '/thumbnail/url' },
+    { op: 'remove', path: '/media:thumbnail' },
+  ]
+
+  yahoo = [
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'copy', from: '/media:content/url', path: '/thumbnail/url' },    
+    { op: 'copy', from: '/title', path: '/description' },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'add', path: '/source', value: 'Yahoo News' },
+    {
+      op: 'remove',
+      path: '/media:content',
+    },
+    {
+      op: 'remove',
+      path: '/media:credit',
+    },
+  ]
 }

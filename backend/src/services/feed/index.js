@@ -82,8 +82,7 @@ export class FeedService extends ApplicationService {
             this.setStrategy(this.#feedProvider[feedName]);
 
             const feed = await this.getFeed();
-
-            this.#logger.log(feed);
+            //this.#logger.log(feed);
 
             if (!feed) {
               this.#logger.info(
@@ -91,6 +90,14 @@ export class FeedService extends ApplicationService {
               );
               return;
             }
+
+            // this is where we'll probably make inferences about feed item category
+            /* 
+              const categorizedFeed = feed.map((item) => {
+                const category = this.#sandbox.my.MLService.Classification.classify('feed-item-category', item);
+                return Object.assign(item, { category });
+              });
+            */
             const stringifiedFeed = JSON.stringify(feed);
             const key = `feed.${feedName}.${this.#sandbox.core.createHash(stringifiedFeed)}`;
 

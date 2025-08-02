@@ -49,12 +49,12 @@ export class MLService extends ApplicationService {
     const EVERY_24_HRS = '*/5 * * * *';
     const EVERY_36_HRS = '*/7 * * * *';
 
-    CronJob.from({
-      cronTime: EVERY_24_HRS,
-      onTick: this.#onScheduledDataPull.bind(this),
-      start: true,
-      timeZone: 'America/Los_Angeles',
-    });
+    // CronJob.from({
+    //   cronTime: EVERY_24_HRS,
+    //   onTick: this.#onScheduledDataPull.bind(this),
+    //   start: true,
+    //   timeZone: 'America/Los_Angeles',
+    // });
 
     CronJob.from({
       cronTime: EVERY_36_HRS,
@@ -65,7 +65,8 @@ export class MLService extends ApplicationService {
   }
 
   /**
-   * Pulls raw data from the local JSON file data sink 
+   * Pulls raw data from the local JSON file data sink
+   * to format into the training data structure
    */
   async #onScheduledDataPull() {
     try {
@@ -73,11 +74,12 @@ export class MLService extends ApplicationService {
       const preProcessingPipeline = new this.#sandbox.my.UtilityService.SyncPipeline([
         (feedItem) => this.#stripHTML(feedItem.description),
         (text) => this.#summarize({ text }),
-        (text) => text.toLowerCase(),
+        this.#dedupe().bind(this),
+        (text) => text?.toLowerCase(),
         this.#createTrainingInput
       ]);
 
-      const trainingData = rawData.map(i => preProcessingPipeline.run(i));
+      const trainingData = rawData.map(i => preProcessingPipeline.run(i)).filter((i) => Boolean(i.text));
       this.#LAST_INDEX_PROCESSED = trainingData.length;
 
       await this.DataSink.push({ bucketPath: '/training/label_required/feeds', data: { items: trainingData }});
@@ -87,7 +89,10 @@ export class MLService extends ApplicationService {
       }, 
       {        
         rel: 'ready_for_labeling',
+        description: 'Indicates a processing pipeline has completed for a training data set'
       }));
+
+      await this.DataSink.flush('/training/raw/feeds');
     } catch(ex) {
       this.#logger.error(`INTERNAL_ERROR (MlService): Exception encountered during scheduled data pull. See details -> ${ex.message}`);
     }
@@ -104,14 +109,14 @@ export class MLService extends ApplicationService {
         const [valid, errors] = SinkValidationProvider.label_required[sinkName].validate(sink);
         if (!valid) {
           this.#logger.error(errors);
-          throw new Error(`Validation failure on training item in (/training/label_required/${sinkName}) data sink. Ensure all data in the label_required sink is labeled and valid per the schema. See any additional errors above.`);
+          throw new Error(`Validation failure on training item in (/training/label_required/${sinkName}) data sink. ENSURE ALL DATA in the "label_required sink" is labeled and valid per the schema. See any additional errors above.`);
         }
         this.#events.dispatchEvent(new SystemEvent(Events.DATA_SINK_LABELING_VALIDATED, {
             bucket: `/training/label_required/${sinkName}`
           },
           {
             rel: 'ready_for_upload',
-            description: 'Indicates the *local* file data sink containing the validated and labeled training data to be pushed to object storage'
+            description: 'Indicates the *local* file data sink containing the validated and labeled training data can be pushed to object storage'
           }
         ))
       });
@@ -121,12 +126,24 @@ export class MLService extends ApplicationService {
   }
 
   /**
+   * Removes duplicates of summarized text from the training data
+   * @returns {Function}
+   */
+  #dedupe() {
+    const seen = new Set();
+    return function(text) {
+      const hashedString = this.#sandbox.core.createHash(text);
+      return text && !seen.has(hashedString) ? (seen.add(hashedString), text) : null;
+    };
+  }
+
+  /**
    * Takes a raw feed item and produces a structured training input for
    * a ML training job
    * @param {String} text 
    * @returns {Object}
    */
-  #createTrainingInput(text) {
+  #createTrainingInput(text=null) {
     return {
       text,
       label: null

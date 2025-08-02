@@ -58,7 +58,7 @@ new Sandbox(MY_SERVICES, async function(box) {
   try {
     console.log(`${APP_NAME} v${APP_VERSION}`);
     console.log(box.my.NOOPService.status);
-    console.log(box.my.FeedMonitor.status);
+    //console.log(box.my.FeedMonitor.status);
     
     console.log(box.my.MLService.status);
     console.log(box.my.Database.status);
@@ -174,7 +174,7 @@ new Sandbox(MY_SERVICES, async function(box) {
         );
       } catch (ex) {
         console.error(
-          `INTERNAL_ERROR (Main): Exception encountered while processing feed update (${feedName}) See details -> ${ex.message}`
+          `INTERNAL_ERROR (Main): Exception encountered while processing feed update (${feedName}) ENSURE APPROPRIATE CORS CONFIGURATION for calls to RSS feed endpoints. This is the **MOST COMMON REASON** for this exception. See details -> ${ex.message}`
         );
       }
     }

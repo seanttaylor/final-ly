@@ -70,6 +70,23 @@ export class JSONDataSink {
         this.#logger.error(`INTERNAL_ERROR (MLService.DataSink): Failed to pull data from path (${bucketPath}) See details -> ${ex.message}`);
       }
     }
+
+    /**
+     * @param {String} bucketPath
+     */
+    async flush(bucketPath) {
+      try {
+        const path = bucketPath.startsWith('/') ? bucketPath : `/${bucketPath}`;
+        JSONPointer.set(this.#sinkData, path, []);
+        await fs.writeFile(
+          this.#SINK_FILE_PATH,
+          JSON.stringify(this.#sinkData, null, 2),
+          'utf-8'
+        );
+      } catch (ex) {
+        this.#logger.error(`INTERNAL_ERROR (MLService.DataSink): Exception encountered while flushing sink data from path (${bucketPath}) See details -> ${ex.message}`);
+      }
+    }
     
     /**
      * Loads sink data from file

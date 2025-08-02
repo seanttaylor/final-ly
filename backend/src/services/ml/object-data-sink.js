@@ -52,6 +52,7 @@ export class ObjectDataSink {
         },
         {
           rel: 'ready_for_training',
+          description: 'Indicates the validated, labeled training data has successfully uploaded to object storage and can be used in training jobs'
         }
       ))
      

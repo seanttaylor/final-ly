@@ -1,19 +1,24 @@
 export const Feeds = {
+    // al_jazeera: {
+    //   name: 'al_jazeera',
+    //   URL: 'https://www.aljazeera.com/xml/rss/all.xml',
+    //   refreshType: 'pull',
+    // },
     // abc: {
     //   name: 'abc',
     //   URL: 'https://abcnews.go.com/abcnews/topstories',
     //   refreshType: 'pull',
     // },
-    arstechnica: {
-      name: 'arstechnica',
-      URL: 'http://feeds.arstechnica.com/arstechnica/index/',
-      refreshType: 'pull',
-    },
-    axios: {
-      name: 'axios',
-      URL: 'https://api.axios.com/feed/',
-      refreshType: 'pull',
-    },
+    // arstechnica: {
+    //   name: 'arstechnica',
+    //   URL: 'http://feeds.arstechnica.com/arstechnica/index/',
+    //   refreshType: 'pull',
+    // },
+    // axios: {
+    //   name: 'axios',
+    //   URL: 'https://api.axios.com/feed/',
+    //   refreshType: 'pull',
+    // },
     // bbc: {
     //   name: 'bbc',
     //   URL: 'https://feeds.bbci.co.uk/news/rss.xml',
@@ -103,15 +108,30 @@ export const Feeds = {
     //   URL: 'https://www.salon.com/feed',
     //   refreshType: 'pull',
     // },
-    // vanityfair: {
-    //   name: 'vanityfair',
-    //   URL: 'https://www.vanityfair.com/feed/rss',
+    // science_daily: {
+    //   name: 'science_daily',
+    //   URL: 'https://www.sciencedaily.com/rss/top.xml',
     //   refreshType: 'pull',
     // },
+    // sydney_morning_herald: {
+    //   name: 'sydney_morning_herald',
+    //   URL: 'https://www.smh.com.au/rss/world.xml',
+    //   refreshType: 'pull'
+    // },
+    // un_news: {
+    //   name: 'un_news',
+    //   URL: 'https://news.un.org/feed/subscribe/en/news/all/rss.xml',
+    //   refreshType: 'pull',
+    // },
+    vanityfair: {
+      name: 'vanityfair',
+      URL: 'https://www.vanityfair.com/feed/rss',
+      refreshType: 'pull',
+    },
     // vox: {
     //   name: 'vox',
     //   URL: 'https://www.vox.com/rss/index.xml',
-    //   refreshType: 'push',
+    //   refreshType: 'pull',
     // },
     // wapo: {
     //   world: {
@@ -131,5 +151,5 @@ export const Feeds = {
     //   name: 'yahoo',
     //   URL: 'https://www.yahoo.com/news/rss',
     //   refreshType: 'pull',
-    // },
+    // }
   };

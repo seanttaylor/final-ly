@@ -7,5 +7,6 @@
     "sourceFlag": "--source ./backend",
     "allowUnauthenticatedInvocationsFlag": "--allow-unauthenticated"
   },
+  "gemini_api": {},
   "secrets_manager": {}
 }
