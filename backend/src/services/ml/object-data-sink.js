@@ -90,7 +90,11 @@ export class ObjectDataSink {
                 this.#events.dispatchEvent(new SystemEvent(Events.DATA_SINK_LOADED, {
                   bucketName: this.#SINK_BUCKET_NAME,
                   bucketPath,
-                }));
+                }, 
+                {
+                  description: "Indicates the data sink has been loaded from remote object storage"
+                }
+              ));
             }, 0);
         } catch (ex) {
             this.#logger.error(`INTERNAL_ERROR (MLService.ObjectDataSink): Failed to load data from path (${bucketPath}) See details -> ${ex.message}`);

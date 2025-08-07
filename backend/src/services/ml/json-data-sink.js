@@ -98,6 +98,8 @@ export class JSONDataSink {
         this.#events.dispatchEvent(new SystemEvent(Events.DATA_SINK_LOADED, {
             bucketName: null,
             bucketPath: this.#SINK_FILE_PATH
+        }, {
+          description: "Indicates the **LOCAL** data sink has been loaded from the JSON file, which may contain feed items that need preprocessing"
         }));
         } catch (ex) {
             if (ex.code === 'ENOENT') {

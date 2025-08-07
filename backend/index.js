@@ -57,11 +57,7 @@ const MY_SERVICES = [...core, ...services, ...providers];
 new Sandbox(MY_SERVICES, async function(box) {
   try {
     console.log(`${APP_NAME} v${APP_VERSION}`);
-    console.log(box.my.NOOPService.status);
-    //console.log(box.my.FeedMonitor.status);
-    
-    console.log(box.my.MLService.status);
-    console.log(box.my.Database.status);
+    bootstrapStartupServices();
 
     box.my.Events.addEventListener(Events.FEEDS_REFRESHED, wrapAsyncEventHandler(onFeedsRefreshed));
     box.my.Events.addEventListener(Events.FEED_UPDATED, wrapAsyncEventHandler(onFeedUpdate));
@@ -75,6 +71,21 @@ new Sandbox(MY_SERVICES, async function(box) {
 
     function logEvent({ detail: event }) {
       console.log(event);
+    }
+
+    /**
+     * Bootstraps specific services to ensure their APIs are available to the application when needed
+     * @param {Object[]} services - services which *REQUIRE* a manual start by the application
+     */
+    function bootstrapStartupServices(services) {
+      const activeServices = [
+        { ...box.my.Config.status },
+        { ...box.my.NOOPService.status },
+        //{ ...box.my.FeedMonitor.status },
+        { ...box.my.MLService.status },
+        { ...box.my.Database.status }
+      ];
+      console.table(activeServices, ['name', 'timestamp']);
     }
 
     /**

@@ -159,6 +159,8 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/source', value: 'BBC News' },
   ]
 
+  democracy_now = []
+
   economist = [
     { op: 'add', path: '/author', value: null },
     { op: 'add', path: '/html', value: null },
@@ -170,6 +172,22 @@ export class PatchProvider extends ApplicationService {
     },
     { op: 'add', path: '/source', value: 'The Economist' },
   ]
+
+  fastcompany = []
+
+  financial_times = [] 
+  
+  foreign_policy = []
+
+  fortune = []
+
+  guardian = []
+
+  gizmodo = []
+
+  intercept = []
+
+  latimes = []
 
   mit_tech_review = [
     {op: 'add', path: '/thumbnail', value: { url: null}},
@@ -188,6 +206,12 @@ export class PatchProvider extends ApplicationService {
     { op: 'remove', path: '/post-id' },
   ];
 
+  the_nation = []
+
+  newsweek = []
+
+  nytimes_world = []
+
   npr = [
     { op: 'add', path: '/thumbnail', value: { url: null } },
     { op: 'add', path: '/category', value: [] },
@@ -204,6 +228,22 @@ export class PatchProvider extends ApplicationService {
     { op: 'move', from: '/dc:creator', path: '/author' },
     { op: 'move', from: '/content:encoded', path: '/html' },
   ]
+
+  politico = []
+
+  quartz = []
+
+  salon = []
+
+  scientific_american = []
+
+  smithsonian_magazine = []
+
+  science_daily = []
+
+  sydney_morning_herald = []
+
+  un_news = []
 
   vanityfair = [
     { op: 'add', path: '/thumbnail', value: { url: null } },
@@ -272,6 +312,8 @@ export class PatchProvider extends ApplicationService {
     { op: 'copy', from: '/media:thumbnail/url', path: '/thumbnail/url' },
     { op: 'remove', path: '/media:thumbnail' },
   ]
+
+  vox = []
 
   yahoo = [
     {
