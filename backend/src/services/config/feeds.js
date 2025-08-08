@@ -80,6 +80,7 @@ export const Feeds = {
     //   name: 'intercept',
     //   URL: 'https://theintercept.com/feed/?lang=en',
     //   refreshType: 'pull',
+    //   hasFullText: true,
     // },
     // latimes: {
     //   name: 'latimes',
@@ -162,6 +163,7 @@ export const Feeds = {
     //   name: 'vox',
     //   URL: 'https://www.vox.com/rss/index.xml',
     //   refreshType: 'pull',
+    //   hasFullText: true
     // },
     // wapo: {
     //   world: {

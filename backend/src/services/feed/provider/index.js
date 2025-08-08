@@ -103,6 +103,31 @@ export class PatchProvider extends ApplicationService {
     super();
   }
 
+  abc = [
+    { op: 'add', path: '/html', value: null },
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/source', value: 'CBS' },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/title/__cdata', path: '/title' },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/description' },
+    { op: 'remove', path: '/keywords' },
+  ]
+
+  aljazeera = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Financial Times' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/description'},
+    { op: 'remove', path: '/post-id'},
+
+  ]
+
   arstechnica = [
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'copy', from: '/category', path: '/category' },
@@ -159,35 +184,165 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/source', value: 'BBC News' },
   ]
 
-  democracy_now = []
+  cbs = [
+    { op: 'add', path: '/html', value: null },
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/source', value: 'CBS' },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/description' },
+    { op: 'remove', path: '/image' }
+  ]
+
+  democracy_now = [
+    { op: 'add', path: '/html', value: null },
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/source', value: 'Democracy Now' },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/encoded/__cdata', path: '/html' },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/description'}
+  ]
 
   economist = [
     { op: 'add', path: '/author', value: null },
     { op: 'add', path: '/html', value: null },
     { op: 'add', path: '/thumbnail', value: { url: null } },
-    { op: 'move', from: '/pubDate', path: '/publicationDate' },
-    {
-      op: 'remove',
-      path: '/guid',
-    },
     { op: 'add', path: '/source', value: 'The Economist' },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/title/__cdata', path: '/title'},
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/description'}
   ]
 
-  fastcompany = []
+  fastcompany = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'FastCompany' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/creator/__cdata', path: '/author'},
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/description' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/deck' },
+    { op: 'remove', path: '/content' },
+    { op: 'remove', path: '/enclosure' }
+  ]
 
-  financial_times = [] 
+  financial_times = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Financial Times' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/title/__cdata', path: '/title'},
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/description' },
+    { op: 'remove', path: '/link' }
+  ]
   
-  foreign_policy = []
+  foreign_policy = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Foreign Policy' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/encoded/__cdata', path: '/html' },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/description' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/comments' },
+    { op: 'remove', path: '/commentRss' },
+    { op: 'remove', path: '/post-id' },
+    { op: 'remove', path: '/enclosure' }
+  ]
 
-  fortune = []
+  fortune = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Fortune' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/creator', path: '/author'},
+    { op: 'move', from: '/encoded/__cdata', path: '/html' },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/description' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/content'},
+    { op: 'remove', path: '/updated'},
+    { op: 'remove', path: '/modified'}
+  ]
 
-  guardian = []
+  guardian = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'The Guardian' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/creator', path: '/author' },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/description' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/content' }
+  ]
 
-  gizmodo = []
+  gizmodo = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Gizmodo' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/encoded/__cdata', path: '/html' },
+    { op: 'move', from: '/creator/__cdata', path: '/author' },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/description' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/commentRss' },
 
-  intercept = []
+  ]
 
-  latimes = []
+  intercept = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'The Intercept' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/encoded/__cdata', path: '/html' },
+    { op: 'move', from: '/creator/__cdata', path: '/author'},
+    { op: 'move', from: '/title/__cdata', path: '/title'},
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/description' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/commentRss' },    
+    { op: 'remove', path: '/comments' },
+    { op: 'remove', path: '/content' },
+    { op: 'remove', path: '/post-id' }
+  ]
+
+  latimes = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'The Los Angeles Times' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/creator', path: '/author' },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/description' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: 'content' }
+  ]
 
   mit_tech_review = [
     {op: 'add', path: '/thumbnail', value: { url: null}},
@@ -206,9 +361,33 @@ export class PatchProvider extends ApplicationService {
     { op: 'remove', path: '/post-id' },
   ];
 
-  the_nation = []
+  the_nation = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'The Nation' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/creator/__cdata', path: '/author' },
+    { op: 'remove', path: '/comments'},
+    { op: 'remove', path: '/commentRss'},
+    { op: 'remove', path: '/guid'},
+    { op: 'remove', path: '/description'},
+    { op: 'remove', path: '/link'}
+  ]
 
-  newsweek = []
+  newsweek = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Newsweek' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/title/__cdata', path: '/title'},
+    { op: 'remove', path: '/description'},
+    { op: 'remove', path: 'guid'},
+    { op: 'remove', path: '/link'}
+  ]
 
   nytimes_world = []
 
@@ -229,21 +408,129 @@ export class PatchProvider extends ApplicationService {
     { op: 'move', from: '/content:encoded', path: '/html' },
   ]
 
-  politico = []
+  politico = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Politico' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/encoded/__cdata', path: '/html'},
+    { op: 'move', from: '/creator/', path: '/author' },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    { op: 'remove', path: '/description'},
+    { op: 'remove', path: '/link'},
+    { op: 'remove', path: '/template'},
+    { op: 'remove', path: '/modified'},
+    { op: 'remove', path: '/contributor'},
+    { op: 'remove', path: '/content'},
+  ]
 
-  quartz = []
+  quartz = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Quartz' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/creator/__cdata', path: '/author' },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    { op: 'remove', path: '/description'},
+    { op: 'remove', path: '/link'}
+  ]
 
-  salon = []
+  salon = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Salon' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/title/__cdata', path: '/title'},
+    { op: 'move', from: '/creator/__cdata', path: '/author' },
+    { op: 'move', from: '/encoded/__cdata', path: '/html'},
+    { op: 'remove', path: '/guid'},
+    { op: 'remove', path: '/description'},
+    { op: 'remove', path: '/link'},
+    { op: 'remove', path: '/content'},
+  ]
 
-  scientific_american = []
+  scientific_american = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Scientific American' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'remove', path: '/link'},
+    { op: 'remove', path: '/guid'},
+    { op: 'remove', path: '/description'}
+  ]
 
-  smithsonian_magazine = []
+  smithsonian_magazine = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Smithsonian Magazine' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    { op: 'remove', path: '/description'},
+  ]
 
-  science_daily = []
+  science_daily = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Science Daily' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    { op: 'remove', path: '/description'},
+    { op: 'remove', path: '/link'},
 
-  sydney_morning_herald = []
+  ]
 
-  un_news = []
+  sydney_morning_herald = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Sydney Morning Herald' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/creator', path: '/author' },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    {
+      op: 'remove',
+      path: '/guid',
+    },
+    { op: 'remove', path: '/enclosure'},
+    { op: 'remove', path: '/description' }
+  ]
+
+  un_news = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'UN News' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/author', value: null },
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/enclosure' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/description' },
+  ]
 
   vanityfair = [
     { op: 'add', path: '/thumbnail', value: { url: null } },
@@ -313,7 +600,37 @@ export class PatchProvider extends ApplicationService {
     { op: 'remove', path: '/media:thumbnail' },
   ]
 
-  vox = []
+  vox = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/html', value:  null },
+    { op: 'add', path: '/source', value: 'Vox' },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'move', from: '/published', path: '/publicationDate' },
+    { op: 'move', from: '/title/__cdata', path: '/title' },
+    { op: 'move', from: '/author/name', path: '/author' },
+    { op: 'move', from: '/content/__cdata', path: '/html'},
+    {
+      op: 'remove',
+      path: '/summary',
+    },
+    {
+      op: 'remove',
+      path: '/link',
+    },
+    {
+      op: 'remove',
+      path: '/updated',
+    },
+    {
+      op: 'remove',
+      path: '/category',
+    },
+    {
+      op: 'remove',
+      path: '/id',
+    },
+
+  ]
 
   yahoo = [
     {
