@@ -24,6 +24,11 @@ export const Feeds = {
     //   URL: 'https://feeds.bbci.co.uk/news/rss.xml',
     //   refreshType: 'pull',
     // },
+    // business_insider: {
+    //   name: 'business_insider',
+    //   URL: 'https://feeds.businessinsider.com/custom/all',
+    //   refreshType: 'pull',
+    // },
     // cbs: {
     //   name: 'cbs',
     //   URL: 'https://www.cbsnews.com/latest/rss/main',
@@ -33,6 +38,12 @@ export const Feeds = {
     //   name: 'democracy_now',
     //   URL: 'https://www.democracynow.org/democracynow.rss',
     //   refreshType: 'pull'
+    // },
+    // der_spiegel: {
+    //     name: 'der_spiegel',
+    //     URL: 'https://www.spiegel.de/international/index.rss',
+    //     refreshType: 'pull'
+    //   }
     // },
     // economist: {
     //   name: 'economist',
@@ -49,6 +60,11 @@ export const Feeds = {
     //   URL: 'https://www.ft.com/rss/home',
     //   refreshType: 'pull'
     // },
+    // foreign_affairs: {
+    //   name: 'foreign_affairs',
+    //   URL: 'https://www.foreignaffairs.com/rss.xml,
+    //   refreshType: 'pull',
+    // }
     // foreign_policy: {
     //   name: 'foreign_policy',
     //   URL: 'https://foreignpolicy.com/feed/',
@@ -87,6 +103,11 @@ export const Feeds = {
     //   URL: 'https://www.latimes.com/local/rss2.0.xml',
     //   refreshType: 'pull',
     // },
+    // le_monde: {
+    //   name: 'le_monde',
+    //   URL: 'https://www.lemonde.fr/en/rss/une.xml',
+    //   refreshType: 'pull',
+    // },
     // mit_tech_review: {
     //   name: 'mit_tech_review',
     //   URL: 'https://www.technologyreview.com/feed/',
@@ -117,7 +138,8 @@ export const Feeds = {
     // politico: {
     //   name: 'politico',
     //   URL: 'https://www.politico.com/rss/politicopicks.xml',
-    //   refreshType: 'push',
+    //   refreshType: 'pull',
+    //   hasFullText: true
     // },
     // quartz: {
     //   name: 'quartz',
@@ -154,16 +176,21 @@ export const Feeds = {
     //   URL: 'https://news.un.org/feed/subscribe/en/news/all/rss.xml',
     //   refreshType: 'pull',
     // },
-    // vanityfair: {
-    //   name: 'vanityfair',
-    //   URL: 'https://www.vanityfair.com/feed/rss',
-    //   refreshType: 'pull',
-    // },
+    vanityfair: {
+      name: 'vanityfair',
+      URL: 'https://www.vanityfair.com/feed/rss',
+      refreshType: 'pull',
+    },
     // vox: {
     //   name: 'vox',
-    //   URL: 'https://www.vox.com/rss/index.xml',
+    //   hasFullText: true,
+    //   patch: [
+    //     { op: 'add', path: '/rss', value: {} },
+    //     { op: 'add', path: '/rss/channel', value: { item: null } },
+    //     { op: 'move', from: '/feed/entry', path: '/rss/channel/item' }
+    //   ],
     //   refreshType: 'pull',
-    //   hasFullText: true
+    //   URL: 'https://www.vox.com/rss/index.xml',
     // },
     // wapo: {
     //   world: {

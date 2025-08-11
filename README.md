@@ -6,3 +6,4 @@ Current.ly is a work-in-progress mobile web app that aggregates news from source
 
 The app also uses machine learning to tailor your feed over time while also leaving the option for chronological feeds. This is a simple lightweight alternative to bloated feed applications that never end. Just a decent news app with enough to keep you informed without driving you nuts.
 
+https://codebeautify.org/xmltojson

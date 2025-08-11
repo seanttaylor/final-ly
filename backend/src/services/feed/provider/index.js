@@ -1,3 +1,4 @@
+import jsonpatch from 'fast-json-patch';
 import { XMLParser } from 'fast-xml-parser';
 import { ApplicationService } from '../../../types/application.js';
 
@@ -22,6 +23,7 @@ class FeedStrategy {
 }
 
 class DefaultFeedStrategy extends FeedStrategy {
+  patch;
   name;
   #feedURL;
 
@@ -29,11 +31,13 @@ class DefaultFeedStrategy extends FeedStrategy {
    * @param {String} options.name
    * @param {String} options.URL
    * @param {String} options.refreshType
-   * @param {String|undefined} feedURLPrefix - optional URL provided by justcors.com for proxying CORS requests
+   * @param {Object[]} [options.patch] - optional JSON Patch document that will be applied to the raw feed item structure if it differs from that of the standard XML RSS feed
+   * @param {String|undefined} [feedURLPrefix] - optional URL provided by justcors.com for proxying CORS requests
    */
-  constructor({ name, URL, refreshType = 'pull' }, feedURLPrefix='') {
+  constructor({ name, URL, patch, refreshType = 'pull' }, feedURLPrefix='') {
     super();
     this.name = name;
+    this.patch = patch;
     this.#feedURL = `${feedURLPrefix}${URL}`;
     this.refreshType = refreshType;
   }
@@ -49,7 +53,11 @@ class DefaultFeedStrategy extends FeedStrategy {
         },
       });
       const response = await request.text();
-      const rawFeed = this.parser.parse(response);
+      let rawFeed = this.parser.parse(response);
+
+      if (this.patch) {
+        rawFeed = jsonpatch.applyPatch(rawFeed, this.patch).newDocument;
+      }
 
       return Object.assign({}, { rss: rawFeed.rss });
     } catch (ex) {
@@ -121,11 +129,10 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/source', value: 'Financial Times' },
     { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/author', value: null },
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/guid' },
     { op: 'remove', path: '/link' },
-    { op: 'remove', path: '/description'},
     { op: 'remove', path: '/post-id'},
-
   ]
 
   arstechnica = [
@@ -189,9 +196,9 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/thumbnail', value: { url: null } },
     { op: 'add', path: '/source', value: 'CBS' },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/guid' },
     { op: 'remove', path: '/link' },
-    { op: 'remove', path: '/description' },
     { op: 'remove', path: '/image' }
   ]
 
@@ -201,9 +208,9 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/source', value: 'Democracy Now' },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'move', from: '/encoded/__cdata', path: '/html' },
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/guid' },
     { op: 'remove', path: '/link' },
-    { op: 'remove', path: '/description'}
   ]
 
   economist = [
@@ -213,9 +220,9 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/source', value: 'The Economist' },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'move', from: '/title/__cdata', path: '/title'},
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/guid' },
     { op: 'remove', path: '/link' },
-    { op: 'remove', path: '/description'}
   ]
 
   fastcompany = [
@@ -226,8 +233,8 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'move', from: '/creator/__cdata', path: '/author'},
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/guid' },
-    { op: 'remove', path: '/description' },
     { op: 'remove', path: '/link' },
     { op: 'remove', path: '/deck' },
     { op: 'remove', path: '/content' },
@@ -242,8 +249,8 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/title/__cdata', path: '/title'},
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/guid' },
-    { op: 'remove', path: '/description' },
     { op: 'remove', path: '/link' }
   ]
   
@@ -255,8 +262,8 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'move', from: '/encoded/__cdata', path: '/html' },
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/guid' },
-    { op: 'remove', path: '/description' },
     { op: 'remove', path: '/link' },
     { op: 'remove', path: '/comments' },
     { op: 'remove', path: '/commentRss' },
@@ -273,8 +280,8 @@ export class PatchProvider extends ApplicationService {
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'move', from: '/creator', path: '/author'},
     { op: 'move', from: '/encoded/__cdata', path: '/html' },
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/guid' },
-    { op: 'remove', path: '/description' },
     { op: 'remove', path: '/link' },
     { op: 'remove', path: '/content'},
     { op: 'remove', path: '/updated'},
@@ -289,8 +296,8 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'move', from: '/creator', path: '/author' },
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/guid' },
-    { op: 'remove', path: '/description' },
     { op: 'remove', path: '/link' },
     { op: 'remove', path: '/content' }
   ]
@@ -304,8 +311,8 @@ export class PatchProvider extends ApplicationService {
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'move', from: '/encoded/__cdata', path: '/html' },
     { op: 'move', from: '/creator/__cdata', path: '/author' },
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/guid' },
-    { op: 'remove', path: '/description' },
     { op: 'remove', path: '/link' },
     { op: 'remove', path: '/commentRss' },
 
@@ -321,8 +328,8 @@ export class PatchProvider extends ApplicationService {
     { op: 'move', from: '/encoded/__cdata', path: '/html' },
     { op: 'move', from: '/creator/__cdata', path: '/author'},
     { op: 'move', from: '/title/__cdata', path: '/title'},
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/guid' },
-    { op: 'remove', path: '/description' },
     { op: 'remove', path: '/link' },
     { op: 'remove', path: '/commentRss' },    
     { op: 'remove', path: '/comments' },
@@ -338,8 +345,8 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'move', from: '/creator', path: '/author' },
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/guid' },
-    { op: 'remove', path: '/description' },
     { op: 'remove', path: '/link' },
     { op: 'remove', path: 'content' }
   ]
@@ -369,10 +376,10 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'move', from: '/creator/__cdata', path: '/author' },
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/comments'},
     { op: 'remove', path: '/commentRss'},
     { op: 'remove', path: '/guid'},
-    { op: 'remove', path: '/description'},
     { op: 'remove', path: '/link'}
   ]
 
@@ -384,7 +391,7 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'move', from: '/title/__cdata', path: '/title'},
-    { op: 'remove', path: '/description'},
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: 'guid'},
     { op: 'remove', path: '/link'}
   ]
@@ -394,14 +401,8 @@ export class PatchProvider extends ApplicationService {
   npr = [
     { op: 'add', path: '/thumbnail', value: { url: null } },
     { op: 'add', path: '/category', value: [] },
-    {
-      op: 'remove',
-      path: '/guid',
-    },
-    {
-      op: 'remove',
-      path: '/image',
-    },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/image' },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'add', path: '/source', value: 'NPR' },
     { op: 'move', from: '/dc:creator', path: '/author' },
@@ -415,18 +416,12 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
-    { op: 'move', from: '/encoded/__cdata', path: '/html'},
-    { op: 'move', from: '/creator/', path: '/author' },
-    {
-      op: 'remove',
-      path: '/guid',
-    },
-    { op: 'remove', path: '/description'},
+    { op: 'copy', from: '/title', path: '/description'},
+    { op: 'remove', path: '/guid' },
     { op: 'remove', path: '/link'},
-    { op: 'remove', path: '/template'},
-    { op: 'remove', path: '/modified'},
-    { op: 'remove', path: '/contributor'},
-    { op: 'remove', path: '/content'},
+    { op: 'remove', path: '/maz:modified' },
+    { op: 'remove', path: '/media:content'},
+    { op: 'remove', path: '/maz:template'},
   ]
 
   quartz = [
@@ -436,12 +431,10 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
-    { op: 'move', from: '/creator/__cdata', path: '/author' },
-    {
-      op: 'remove',
-      path: '/guid',
-    },
-    { op: 'remove', path: '/description'},
+    { op: 'copy', from: '/title', path: '/description'},
+    { op: 'move', from: '/dc:creator', path: '/author' },
+    { op: 'move', from: '/media:thumbnail/url', path: '/thumbnail/url' },
+    { op: 'remove', path: '/guid' },
     { op: 'remove', path: '/link'}
   ]
 
@@ -452,13 +445,13 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
-    { op: 'move', from: '/title/__cdata', path: '/title'},
-    { op: 'move', from: '/creator/__cdata', path: '/author' },
-    { op: 'move', from: '/encoded/__cdata', path: '/html'},
-    { op: 'remove', path: '/guid'},
-    { op: 'remove', path: '/description'},
-    { op: 'remove', path: '/link'},
-    { op: 'remove', path: '/content'},
+    { op: 'move', from: '/dc:creator', path: '/author' },
+    { op: 'move', from: 'media:thumbnail/url', path: '/thumbnail/url' },
+    { op: 'copy', from: '/title', path: '/description' },
+    { op: 'remove', from: '/media:content' },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/content' },
   ]
 
   scientific_american = [
@@ -468,9 +461,9 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/link'},
     { op: 'remove', path: '/guid'},
-    { op: 'remove', path: '/description'}
   ]
 
   smithsonian_magazine = [
@@ -480,11 +473,8 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
-    {
-      op: 'remove',
-      path: '/guid',
-    },
-    { op: 'remove', path: '/description'},
+    { op: 'copy', from: '/title', path: '/description'},
+    { op: 'remove', path: '/guid'  },
   ]
 
   science_daily = [
@@ -494,13 +484,9 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
-    {
-      op: 'remove',
-      path: '/guid',
-    },
-    { op: 'remove', path: '/description'},
+    { op: 'copy', from: '/title', path: '/description'},
+    { op: 'remove', path: '/guid' },
     { op: 'remove', path: '/link'},
-
   ]
 
   sydney_morning_herald = [
@@ -511,10 +497,8 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/creator', path: '/author' },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
-    {
-      op: 'remove',
-      path: '/guid',
-    },
+    { op: 'copy', from: '/title', path: '/description'},
+    { op: 'remove', path: '/guid' },
     { op: 'remove', path: '/enclosure'},
     { op: 'remove', path: '/description' }
   ]
@@ -526,6 +510,7 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/author', value: null },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'copy', from: '/title', path: '/description'},
     { op: 'remove', path: '/guid' },
     { op: 'remove', path: '/enclosure' },
     { op: 'remove', path: '/link' },
@@ -534,26 +519,16 @@ export class PatchProvider extends ApplicationService {
 
   vanityfair = [
     { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/source', value: 'Vanity Fair' },
     { op: 'copy', from: '/media:thumbnail/url', path: '/thumbnail/url' },
     { op: 'move', from: '/dc:creator', path: '/author' },
-    { op: 'add', path: '/source', value: 'Vanity Fair' },
-    {
-      op: 'remove',
-      path: '/guid',
-    },
+    { op: 'remove', path: '/guid' },
     { op: 'remove', path: '/media:thumbnail' },
-    {
-      op: 'remove',
-      path: '/media:content',
-    },
-    {
-      op: 'remove',
-      path: '/media:keywords',
-    },
-    {
-      op: 'remove',
-      path: '/dc:publisher',
-    },
+    { op: 'remove', path: '/media:content' },
+    { op: 'remove', path: '/media:keywords' },
+    { op: 'remove', path: '/dc:publisher' },
+    { op: 'remove', path: '/dc:subject' },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
   ]
 
@@ -606,30 +581,16 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/source', value: 'Vox' },
     { op: 'add', path: '/category', value: [] },
     { op: 'move', from: '/published', path: '/publicationDate' },
-    { op: 'move', from: '/title/__cdata', path: '/title' },
+    { op: 'move', from: '/title/#text', path: '/title' },
     { op: 'move', from: '/author/name', path: '/author' },
-    { op: 'move', from: '/content/__cdata', path: '/html'},
-    {
-      op: 'remove',
-      path: '/summary',
-    },
-    {
-      op: 'remove',
-      path: '/link',
-    },
-    {
-      op: 'remove',
-      path: '/updated',
-    },
-    {
-      op: 'remove',
-      path: '/category',
-    },
-    {
-      op: 'remove',
-      path: '/id',
-    },
-
+    { op: 'move', from: "/content/#text", path: '/html'},
+    { op: 'copy', from:  '/title', path: '/description'},
+    { op: 'remove', path: '/summary' },
+    { op: 'remove', path: '/link' },
+    { op: 'remove', path: '/updated' },
+    { op: 'remove', path: '/category' },
+    { op: 'remove', path: '/id' },
+    { op: 'remove', path: '/content' },
   ]
 
   yahoo = [

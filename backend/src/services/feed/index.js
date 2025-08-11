@@ -13,6 +13,7 @@ export class FeedService extends ApplicationService {
     #feedProvider;
     #sandbox;
     #logger;
+    // 3 Minutes
     #DEFAULT_TTL_MILLIS = 180000;
   
     /**
@@ -70,19 +71,17 @@ export class FeedService extends ApplicationService {
             return;
           }
           const LAST_REFRESH_MILLIS =
-            (await this.#cache.get(`feed.${feedName}.lastRefresh`)) || 0;
+            (await this.#cache.get(`feed.${feedName}.timestamp`)) || 0;
           
           const TIMESTAMP_MILLIS = new Date().getTime();
           const ELAPSED_TIME_MILLIS = TIMESTAMP_MILLIS - LAST_REFRESH_MILLIS;
           const TTL = feedConfig?.TTL || this.#DEFAULT_TTL_MILLIS;
 
           if (ELAPSED_TIME_MILLIS > TTL && feedConfig.refreshType === 'pull') {
-            //console.log({feedName})
 
             this.setStrategy(this.#feedProvider[feedName]);
 
             const feed = await this.getFeed();
-            //this.#logger.log(feed);
 
             if (!feed) {
               this.#logger.info(
@@ -93,26 +92,36 @@ export class FeedService extends ApplicationService {
 
             // this is where we'll probably make inferences about feed item category
             /* 
-              const categorizedFeed = feed.map((item) => {
-                const category = this.#sandbox.my.MLService.Classification.classify('feed-item-category', item);
+              const categorizedFeed = feed.map(async (item) => {
+                const category = await this.#sandbox.my.MLService.Classification.classify('feed-item-category', item);
                 return Object.assign(item, { category });
               });
             */
             const stringifiedFeed = JSON.stringify(feed);
-            const key = `feed.${feedName}.${this.#sandbox.core.createHash(stringifiedFeed)}`;
-
+            const stringifiedFeedKey = `feed.${feedName}.squished`;
+            
             await this.#cache.set({
-              key,
+              key: stringifiedFeedKey,
               value: stringifiedFeed,
+            });
+            
+            // Since the feeds may or may not expose an `ETag` header we use 
+            // a UNIX timestamp to determine the freshness of a given feed
+            await this.#cache.set({
+              key: `feed.${feedName}.timestamp`,
+              value: new Date().getTime()
             });
 
             this.#events.dispatchEvent(
               new SystemEvent(Events.FEED_UPDATED, {
-                key,
+                key: stringifiedFeedKey,
                 feedName,
               })
             );
+          } else {
+            this.#logger.log(`INFO: Skipping refresh of ${feedName}. TTL has NOT expired`);
           }
+
           if (idx === Object.keys(this.#feedProvider).length - 1) {
             this.#events.dispatchEvent(
               new SystemEvent(Events.FEEDS_REFRESHED)
@@ -147,6 +156,7 @@ export class FeedMonitor extends ApplicationService {
     this.#feedService = sandbox.my.FeedService;
     this.#logger = sandbox.core.logger.getLoggerInstance();
 
+    // Will *EVENTUALLY* be every 10 minutes; for now, every 2 minutes
     const EVERY_10_MIN = '*/2 * * * *';
     try {
       CronJob.from({

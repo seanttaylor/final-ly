@@ -47,7 +47,7 @@ export class MLService extends ApplicationService {
     });
 
     const EVERY_24_HRS = '*/5 * * * *';
-    const EVERY_36_HRS = '*/7 * * * *';
+    const EVERY_36_HRS = '*/6 * * * *';
 
     // CronJob.from({
     //   cronTime: EVERY_24_HRS,
@@ -56,12 +56,12 @@ export class MLService extends ApplicationService {
     //   timeZone: 'America/Los_Angeles',
     // });
 
-    CronJob.from({
-      cronTime: EVERY_36_HRS,
-      onTick: this.#onScheduledLabelValidation.bind(this),
-      start: true,
-      timeZone: 'America/Los_Angeles',
-    });
+    // CronJob.from({
+    //   cronTime: EVERY_36_HRS,
+    //   onTick: this.#onScheduledLabelValidation.bind(this),
+    //   start: true,
+    //   timeZone: 'America/Los_Angeles',
+    // });
   }
 
   /**
@@ -70,7 +70,7 @@ export class MLService extends ApplicationService {
    */
   async #onScheduledDataPull() {
     try {
-      const rawData = (await this.DataSink.pull('/training/raw/feeds')).slice(this.#LAST_INDEX_PROCESSED)
+      const rawData = await this.DataSink.pull('/training/raw/feeds');
       const preProcessingPipeline = new this.#sandbox.my.UtilityService.SyncPipeline([
         (feedItem) => this.#stripHTML(feedItem.description),
         (text) => this.#summarize({ text }),
@@ -80,19 +80,22 @@ export class MLService extends ApplicationService {
       ]);
 
       const trainingData = rawData.map(i => preProcessingPipeline.run(i)).filter((i) => Boolean(i.text));
-      this.#LAST_INDEX_PROCESSED = trainingData.length;
 
       await this.DataSink.push({ bucketPath: '/training/label_required/feeds', data: { items: trainingData }});
       this.#events.dispatchEvent(new SystemEvent(Events.PIPELINE_FINISHED, {
         name: 'feed_categorization_preprocessing',
-        bucket: '/training/label_required/feeds'
+        bucket: '/training/label_required/feeds',
+        itemsProcessed: trainingData.length,
+        itemsTotal: rawData.length,
       }, 
       {        
         rel: 'ready_for_labeling',
         description: 'Indicates a processing pipeline has completed for a training data set'
       }));
 
-      await this.DataSink.flush('/training/raw/feeds');
+      setTimeout(async () => {
+        await this.DataSink.flush('/training/raw/feeds');
+      }, 30000);
     } catch(ex) {
       this.#logger.error(`INTERNAL_ERROR (MlService): Exception encountered during scheduled data pull. See details -> ${ex.message}`);
     }
@@ -180,7 +183,7 @@ export class MLService extends ApplicationService {
     if (boundary === 'sentence') {
       return (
         text
-          .match(/[^.!?]+[.!?]+[\])'"`’”]*\s*/g) // sentence boundary regex
+          .match(/[^.!?]+(?:[.!?]+[\])'"`’”]*\s*|$)/g) // sentence boundary regex
           ?.slice(0, size)
           .join(' ')
           .trim() || ''

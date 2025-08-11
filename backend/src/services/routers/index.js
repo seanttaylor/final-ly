@@ -26,9 +26,10 @@ export class RouteService extends ApplicationService {
     //const dataAccessLayer = this.#sandbox.my.DataAccessLayer;
     const events = this.#sandbox.my.Events;
     const config = this.#sandbox.my.Config;
+    const cache = this.#sandbox.my.Cache;
 
     this.Status = new StatusRouter(/*this.#sandbox.my.MiddlewareProvider*/);
-    this.Feed = new FeedRouter({ config, events });
+    this.Feed = new FeedRouter({ config, events, cache });
     //this.Events = new EventsRouter({ MiddlewareProvider, events });
   }
 }

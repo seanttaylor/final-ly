@@ -81,7 +81,7 @@ new Sandbox(MY_SERVICES, async function(box) {
       const activeServices = [
         { ...box.my.Config.status },
         { ...box.my.NOOPService.status },
-        //{ ...box.my.FeedMonitor.status },
+        { ...box.my.FeedMonitor.status },
         { ...box.my.MLService.status },
         { ...box.my.Database.status }
       ];
@@ -214,6 +214,6 @@ new Sandbox(MY_SERVICES, async function(box) {
     }
   
   } catch(ex) {
-    console.error(`INTERNAL_ERROR (App): Exception encountered during startup. See details -> ${ex.message}`);
+    console.error(`INTERNAL_ERROR (Main): Exception encountered during startup. See details -> ${ex.message}`);
   }
 });
