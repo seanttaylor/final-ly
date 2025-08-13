@@ -28,6 +28,9 @@ import { MLService } from './src/services/ml/index.js';
 import { UtilityService } from './src/services/utils.js';
 import { Xevents } from './src/services/event/index.js';
 
+import { SubscriptionService } from './src/services/subscription/index.js';
+import { UserService } from './src/services/user/index.js';
+
 Sandbox.modules.of('HTTPService', HTTPService);
 Sandbox.modules.of('RouteService', RouteService);
 Sandbox.modules.of('Config', Configuration);
@@ -44,6 +47,8 @@ Sandbox.modules.of('PatchProvider', PatchProvider);
 Sandbox.modules.of('UtilityService', UtilityService);
 
 Sandbox.modules.of('Database', Database);
+Sandbox.modules.of('SubscriptionService', SubscriptionService);
+Sandbox.modules.of('UserService', UserService);
 
 const APP_NAME = 'com.current.ly.backend';
 const APP_VERSION = '0.0.1';
@@ -81,7 +86,7 @@ new Sandbox(MY_SERVICES, async function(box) {
       const activeServices = [
         { ...box.my.Config.status },
         { ...box.my.NOOPService.status },
-        { ...box.my.FeedMonitor.status },
+        //{ ...box.my.FeedMonitor.status },
         { ...box.my.MLService.status },
         { ...box.my.Database.status }
       ];

@@ -15,6 +15,8 @@ export const core = [
     'MLService',
     'NOOPService',
     'RouteService',
+    'SubscriptionService',
+    'UserService'
   ];
   
   // Objects containing generalized functionality consumed by the services above 

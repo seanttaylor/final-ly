@@ -4,6 +4,7 @@
 import { ApplicationService } from '../../types/application.js';
 import { StatusRouter } from './status.js';
 import { FeedRouter } from './feed.js';
+import { SubscriptionRouter } from './subscription.js';
 //import { EventsRouter } from './events.js';
 
 /**
@@ -27,9 +28,21 @@ export class RouteService extends ApplicationService {
     const events = this.#sandbox.my.Events;
     const config = this.#sandbox.my.Config;
     const cache = this.#sandbox.my.Cache;
+    const SubscriptionService = this.#sandbox.my.SubscriptionService;
+    const UserService = this.#sandbox.my.UserService;
 
     this.Status = new StatusRouter(/*this.#sandbox.my.MiddlewareProvider*/);
-    this.Feed = new FeedRouter({ config, events, cache });
+    this.Feed = new FeedRouter({ 
+      cache,
+      config, 
+      events, 
+      UserService 
+    });
+    this.Subscription = new SubscriptionRouter({ 
+      config, 
+      events, 
+      SubscriptionService
+    });
     //this.Events = new EventsRouter({ MiddlewareProvider, events });
   }
 }

@@ -17,19 +17,21 @@ export class FeedRouter {
     /**
      * Returns a unique user feed
      */
-    router.get('/feeds/:id', (req, res) => {
+    router.get('/feeds/:id', async (req, res, next) => {
       res.set('Access-Control-Expose-Headers', 'ETag');
       // Here we will need to instrument a UserService for getting user's combined feed
       // containing all subscribed feeds
-      // const userFeed = Result.ok(await options.UserService.getFeed(req.params.id));
-      /* if (!userFeed.isOk()) {
-        // return appropriate HTTP status codes for UserService.getFeed errors
-      }*/
+      const userFeed = await options.UserService.getFeed(req.params.id);
+      
+      if (!userFeed.isOk()) {
+        next(userFeed.error);
+        return;
+      }
       
       const feed = JSON.parse(options.cache.get('feed.vanityfair.canonical'));
+      res.set('X-Total-Count', feed.items.length);
 
       res.json({
-        count: feed.items.length,
         items: feed.items,
         error: null
       });

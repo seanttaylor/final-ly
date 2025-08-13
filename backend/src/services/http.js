@@ -70,6 +70,7 @@ export class HTTPService extends ApplicationService {
     
     app.use(this.#sandbox.my.RouteService.Status);
     app.use(this.#sandbox.my.RouteService.Feed);
+    app.use(this.#sandbox.my.RouteService.Subscription);
 
     // Rate-limited routes
     app.use(simpleRateLimiter);
@@ -81,15 +82,15 @@ export class HTTPService extends ApplicationService {
 
     //app.use(this.#sandbox.my.RouteService.Events);
    
+    app.use((req, res, next) => {
+      res.set('X-Total-Count', 0);
 
-    app.use((err, req, res) => {
       const status = 404;
       // console.error(`Error 404 on ${req.url}.`);
       res.status(status).send({ 
         status,
-        count: 0,
         items: [], 
-        error: 'Not Found' 
+        error: 'NOT_FOUND' 
       });
     });
 
@@ -99,12 +100,13 @@ export class HTTPService extends ApplicationService {
     app.use((err, req, res, next) => {
       const status = 500;
       const error = err.error || err.message;
+
+      res.set('X-Total-Count', 0);
+      res.set('X-Request-Id', res.locals.request_id);
       
       console.error(`INTERNAL_ERROR (HTTPService): Exception encountered on route (${req.path}). See details -> ${error}`);
       res.status(status).send({ 
         status,
-        request_id: res.locals.request_id,
-        count: 0,
         items: [], 
         error:'INTERNAL_ERROR' 
       });
