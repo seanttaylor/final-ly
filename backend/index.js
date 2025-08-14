@@ -79,15 +79,15 @@ new Sandbox(MY_SERVICES, async function(box) {
     }
 
     /**
-     * Bootstraps specific services to ensure their APIs are available to the application when needed
+     * Bootstraps specific services at startup to ensure their APIs are available to the application when needed
      * @param {Object[]} services - services which *REQUIRE* a manual start by the application
      */
     function bootstrapStartupServices(services) {
       const activeServices = [
         { ...box.my.Config.status },
         { ...box.my.NOOPService.status },
-        //{ ...box.my.FeedMonitor.status },
-        { ...box.my.MLService.status },
+        { ...box.my.FeedMonitor.status },
+        //{ ...box.my.MLService.status },
         { ...box.my.Database.status }
       ];
       console.table(activeServices, ['name', 'timestamp']);
@@ -182,7 +182,7 @@ new Sandbox(MY_SERVICES, async function(box) {
             value: JSON.stringify(canonicalizedFeed)
           });
 
-          await box.my.MLService.DataSink.push({ bucketPath: 'training/raw/feeds', data: canonicalizedFeed });
+          //await box.my.MLService.DataSink.push({ bucketPath: 'training/raw/feeds', data: canonicalizedFeed });
           return;
         }
         console.info(

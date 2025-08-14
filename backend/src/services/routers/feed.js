@@ -24,7 +24,9 @@ export class FeedRouter {
       const userFeed = await options.UserService.getFeed(req.params.id);
       
       if (!userFeed.isOk()) {
-        next(userFeed.error);
+        // wrapped in Error to ensure the correct object structure is returned to
+        // the top-level router handler
+        next(new Error(userFeed.error));
         return;
       }
       
