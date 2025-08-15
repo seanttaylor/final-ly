@@ -2,7 +2,6 @@ import { ApplicationService } from '../../types/application.js';
 import { SystemEvent, Events } from '../../types/system-event.js';
 import { Result } from '../../types/result.js';
 
-
 /**
  * Manages platform users
  */
@@ -40,7 +39,7 @@ export class UserService extends ApplicationService {
   /**
    * Ranks and sorts feed items based on user preferences
    * @param {Object} categoryRanking - user feed item category rank
-   * @param {Object[]} feedList - list of feeds to fetch from the cache
+   * @param {Object[]} feedList - list of feeds fetched from the cache
    * @returns {Object[]}
    */
   #sortUserFeed(categoryRanking, feedList) {
@@ -48,7 +47,8 @@ export class UserService extends ApplicationService {
       const [prevCategory] = prevItem.category;
       const [nextCategory] = nextItem.category;
 
-      return categoryRanking[prevCategory] - categoryRanking[nextCategory];
+      // We we turn on categorization post-fetch, feed items **WILL** have a label prop, then we can remove the (?)
+      return (categoryRanking[prevCategory?.label] || 0) - (categoryRanking[nextCategory?.label] || 0);
     });
   }
 
@@ -81,17 +81,12 @@ export class UserService extends ApplicationService {
    * @returns {Result<Object[]>}
    */
   async getFeed(user_id) {
-    // Get user subscriptions [X]
-    // Iterate over subscriptions [X] 
-    // Pull from the cache for each one [X]
-    // Sort as necessary? [X]
-
     try { 
       const { categoryRanking } = (await this.getUserPreferences(user_id)).getValue();
       const userSubscriptions = await this.#sandbox.my.SubscriptionService.getSubscriptions(user_id);
      
       const finalizedUserFeed = userSubscriptions.map(this.#buildUserFeed.bind(this))
-      //.map(this.#sortUserFeed.bind(this, categoryRanking));
+      .map(this.#sortUserFeed.bind(this, categoryRanking));
 
       if (!finalizedUserFeed.isOk()) {
         this.#logger.log(`INTERNAL_ERROR (UserService): Error occurred while finalizing the user feed. See details -> ${finalizedUserFeed.error}`);

@@ -85,3 +85,95 @@ export class Result {
     return this.error;
   }
 }
+
+export class AsyncResult {
+  #pipeline = [];
+
+  constructor(value, ok = true, error = null) {
+    this.value = value;
+    this.ok = ok;
+    this.error = error;
+  }
+
+  static ok(value) {
+    return new AsyncResult(value);
+  }
+
+  static error(error) {
+    return new AsyncResult(null, false, error);
+  }
+
+  isOk() {
+    return this.ok;
+  }
+
+  isError() {
+    return !this.ok;
+  }
+
+  getValue() {
+    if (this.isError()) {
+      console.info('Cannot get the value of an error AsyncResult');
+      return this.error;
+    }
+    return this.value;
+  }
+
+  /**
+   * Collects an async transformation into the pipeline.
+   * Unwraps nested AsyncResults and handles errors gracefully.
+   * @param {Function} asyncTransformFn
+   * @returns {AsyncResult}
+   */
+  map(asyncTransformFn) {
+    this.#pipeline.push(async (currentValue) => {
+      if (this.isError()) {
+        return AsyncResult.error(this.error);
+      }
+
+      try {
+        // If the value is itself an AsyncResult, unwrap it before passing to transform
+        const unwrappedValue =
+          (currentValue instanceof AsyncResult || currentValue instanceof Result )
+            ? currentValue.getValue()
+            : currentValue;
+
+        const transformed = await asyncTransformFn(unwrappedValue);
+
+        // Avoid double-wrapping if the transform returns an AsyncResult
+        return transformed instanceof AsyncResult
+          ? transformed
+          : AsyncResult.ok(transformed);
+
+      } catch (ex) {
+        return AsyncResult.error(ex.message);
+      }
+    });
+    return this;
+  }
+
+  /**
+   * Executes the collected async functions in sequence.
+   * @returns {Promise<AsyncResult>}
+   */
+  async run() {
+    let currentResult = this.value;
+
+    for (const fn of this.#pipeline) {
+
+      try { 
+        currentResult = await fn(currentResult); 
+        
+        // If a stage fails, break early
+        if (currentResult.isError()) {
+          return currentResult;
+        }
+
+      } catch(ex) {
+        return AsyncResult.error(ex.message);
+      }
+    }
+    return currentResult;
+  }
+}
+

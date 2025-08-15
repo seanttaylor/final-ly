@@ -176,9 +176,12 @@ new Sandbox(MY_SERVICES, async function(box) {
           };
 
           //console.log({ canonicalizedFeed });
+          // this is where we categorize
+          //const categorizedFeed = await categorizeFeed(canonicalizedFeed.items);
 
           await box.my.Cache.set({
             key: `feed.${feedName}.canonical`,
+            // value: JSON.stringify({ feed: feedName, items: categorizedFeed }),
             value: JSON.stringify(canonicalizedFeed)
           });
 
@@ -193,6 +196,21 @@ new Sandbox(MY_SERVICES, async function(box) {
           `INTERNAL_ERROR (Main): Exception encountered while processing feed update (${feedName}) ENSURE APPROPRIATE CORS CONFIGURATION for calls to RSS feed endpoints. This is the **MOST COMMON REASON** for this exception. See details -> ${ex.message}`
         );
       }
+    }
+
+    /**
+     * Uses the ML model for text classification to classify each feed item as specific news category
+     * @param {Object} feedList - list of feeds fetched from the cache
+     * @returns {Promise<Object[]>}
+     */
+    async function categorizeFeed(feedList) {
+      const categorizedFeed = feedList.map(async (item) => {
+        const category = await box.my.MLService.Classification.classify(ML_TASKS.FEED_CATEGORIZATION, item);
+        item.category.push(category);
+        
+        return item;
+      }); 
+      return Promise.all(categorizedFeed);
     }
 
     /**

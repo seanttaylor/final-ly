@@ -1,5 +1,4 @@
 import { CronJob } from 'cron';
-
 import { SystemEvent, Events } from '../../types/system-event.js';
 import { ApplicationService } from '../../types/application.js';
 
@@ -81,23 +80,16 @@ export class FeedService extends ApplicationService {
 
             this.setStrategy(this.#feedProvider[feedName]);
 
-            const feed = await this.getFeed();
+            const rawFeed = await this.getFeed();
 
-            if (!feed) {
+            if (!rawFeed) {
               this.#logger.info(
                 `INFO (FeedService): Could not get feed (${feedName}). See details -> getFeed request returned undefined. Check feed configuration.`
               );
               return;
             }
-
-            // this is where we'll probably make inferences about feed item category
-            /* 
-              const categorizedFeed = feed.map(async (item) => {
-                const category = await this.#sandbox.my.MLService.Classification.classify('feed-item-category', item);
-                return Object.assign(item, { category });
-              });
-            */
-            const stringifiedFeed = JSON.stringify(feed);
+          
+            const stringifiedFeed = JSON.stringify(rawFeed);
             const stringifiedFeedKey = `feed.${feedName}.squished`;
             
             await this.#cache.set({
