@@ -53,7 +53,7 @@ export const Feeds = {
     // fastcompany: {
     //   name: 'fastcompany',
     //   URL: 'https://feeds.feedburner.com/fastcompany/headlines',
-    //   refreshType: 'push',
+    //   refreshType: 'pull',
     // },
     // financial_times: {
     //   name: 'financial_times',
@@ -62,7 +62,7 @@ export const Feeds = {
     // },
     // foreign_affairs: {
     //   name: 'foreign_affairs',
-    //   URL: 'https://www.foreignaffairs.com/rss.xml,
+    //   URL: 'https://www.foreignaffairs.com/rss.xml',
     //   refreshType: 'pull',
     // }
     // foreign_policy: {
@@ -73,7 +73,7 @@ export const Feeds = {
     // fortune: {
     //   name: 'fortune',
     //   URL: 'http://fortune.com/feed/',
-    //   refreshType: 'push',
+    //   refreshType: 'pull',
     // },
     // guardian: {
     //   economics: {
@@ -176,11 +176,11 @@ export const Feeds = {
     //   URL: 'https://news.un.org/feed/subscribe/en/news/all/rss.xml',
     //   refreshType: 'pull',
     // },
-    vanityfair: {
-      name: 'vanityfair',
-      URL: 'https://www.vanityfair.com/feed/rss',
-      refreshType: 'pull',
-    },
+    // vanityfair: {
+    //   name: 'vanityfair',
+    //   URL: 'https://www.vanityfair.com/feed/rss',
+    //   refreshType: 'pull',
+    // },
     // vox: {
     //   name: 'vox',
     //   hasFullText: true,

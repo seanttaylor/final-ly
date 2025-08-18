@@ -60,12 +60,12 @@ export class MLService extends ApplicationService {
     //   timeZone: 'America/Los_Angeles',
     // });
 
-    // CronJob.from({
-    //   cronTime: EVERY_36_HRS,
-    //   onTick: this.#onScheduledLabelValidation.bind(this),
-    //   start: true,
-    //   timeZone: 'America/Los_Angeles',
-    // });
+    CronJob.from({
+      cronTime: EVERY_36_HRS,
+      onTick: this.#onScheduledLabelValidation.bind(this),
+      start: true,
+      timeZone: 'America/Los_Angeles',
+    });
   }
 
   Classification = {
@@ -100,7 +100,7 @@ export class MLService extends ApplicationService {
         this.#createTrainingInput
       ]);
 
-      const trainingData = rawData.map(i => preProcessingPipeline.run(i)).filter((i) => Boolean(i.text));
+      const trainingData = rawData.filter((i) => Boolean(i)).map(i => preProcessingPipeline.run(i)).filter((i) => Boolean(i.text));
 
       await this.DataSink.push({ bucketPath: '/training/label_required/feeds', data: { items: trainingData }});
       this.#events.dispatchEvent(new SystemEvent(Events.PIPELINE_FINISHED, {

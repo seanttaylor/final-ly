@@ -86,8 +86,8 @@ new Sandbox(MY_SERVICES, async function(box) {
       const activeServices = [
         { ...box.my.Config.status },
         { ...box.my.NOOPService.status },
-        { ...box.my.FeedMonitor.status },
-        //{ ...box.my.MLService.status },
+        //{ ...box.my.FeedMonitor.status },
+        { ...box.my.MLService.status },
         { ...box.my.Database.status }
       ];
       console.table(activeServices, ['name', 'timestamp']);
@@ -185,7 +185,7 @@ new Sandbox(MY_SERVICES, async function(box) {
             value: JSON.stringify(canonicalizedFeed)
           });
 
-          //await box.my.MLService.DataSink.push({ bucketPath: 'training/raw/feeds', data: canonicalizedFeed });
+          await box.my.MLService.DataSink.push({ bucketPath: 'training/raw/feeds', data: canonicalizedFeed });
           return;
         }
         console.info(
