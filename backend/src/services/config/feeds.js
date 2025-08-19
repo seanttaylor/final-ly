@@ -176,11 +176,11 @@ export const Feeds = {
     //   URL: 'https://news.un.org/feed/subscribe/en/news/all/rss.xml',
     //   refreshType: 'pull',
     // },
-    // vanityfair: {
-    //   name: 'vanityfair',
-    //   URL: 'https://www.vanityfair.com/feed/rss',
-    //   refreshType: 'pull',
-    // },
+    vanityfair: {
+      name: 'vanityfair',
+      URL: 'https://www.vanityfair.com/feed/rss',
+      refreshType: 'pull',
+    },
     // vox: {
     //   name: 'vox',
     //   hasFullText: true,

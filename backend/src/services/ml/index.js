@@ -60,12 +60,12 @@ export class MLService extends ApplicationService {
     //   timeZone: 'America/Los_Angeles',
     // });
 
-    CronJob.from({
-      cronTime: EVERY_36_HRS,
-      onTick: this.#onScheduledLabelValidation.bind(this),
-      start: true,
-      timeZone: 'America/Los_Angeles',
-    });
+    // CronJob.from({
+    //   cronTime: EVERY_36_HRS,
+    //   onTick: this.#onScheduledLabelValidation.bind(this),
+    //   start: true,
+    //   timeZone: 'America/Los_Angeles',
+    // });
   }
 
   Classification = {

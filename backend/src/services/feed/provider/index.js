@@ -115,6 +115,7 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/html', value: null },
     { op: 'add', path: '/thumbnail', value: { url: null } },
     { op: 'add', path: '/source', value: 'CBS' },
+    { op: 'add', path: '/category', value: [] },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'move', from: '/title/__cdata', path: '/title' },
     { op: 'remove', path: '/guid' },
@@ -136,6 +137,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   arstechnica = [
+    { op: 'add', path: '/category', value: [] },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'copy', from: '/category', path: '/category' },
     { op: 'copy', from: '/title', path: '/title' },
@@ -161,6 +163,7 @@ export class PatchProvider extends ApplicationService {
   
   axios = [
     { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/category', value: [] },
     { op: 'move', from: '/dc:creator', path: '/author' },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     {
@@ -182,6 +185,7 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/thumbnail', value: { url: null } },
     { op: 'copy', from: '/media:thumbnail/url', path: '/thumbnail/url' },
     { op: 'add', path: '/author', value: null },
+    { op: 'add', path: '/category', value: [] },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     {
       op: 'remove',
@@ -195,6 +199,7 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/html', value: null },
     { op: 'add', path: '/thumbnail', value: { url: null } },
     { op: 'add', path: '/source', value: 'CBS' },
+    { op: 'add', path: '/category', value: [] },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'copy', from: '/title', path: '/description'},
     { op: 'move', from: '/image', path: '/thumbnail/url' },
@@ -206,6 +211,7 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/html', value: null },
     { op: 'add', path: '/thumbnail', value: { url: null } },
     { op: 'add', path: '/source', value: 'Democracy Now' },
+    { op: 'add', path: '/category', value: [] },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'move', from: '/content:encoded', path: '/html' },
     { op: 'copy', from: '/title', path: '/description'},
@@ -217,6 +223,7 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/author', value: null },
     { op: 'add', path: '/html', value: null },
     { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/source', value: 'The Economist' },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'copy', from: '/title', path: '/description'},

@@ -9,6 +9,7 @@ import { core, services, providers } from './src/services.js';
 
 /* eslint-disable no-unused-vars */
 import { ISandbox, IEvent } from './src/interfaces.js';
+import { ML_TASKS } from './src/types/ml-task.js';
 
 /* eslint-enable no-unused-vars */
 
@@ -86,7 +87,7 @@ new Sandbox(MY_SERVICES, async function(box) {
       const activeServices = [
         { ...box.my.Config.status },
         { ...box.my.NOOPService.status },
-        //{ ...box.my.FeedMonitor.status },
+        { ...box.my.FeedMonitor.status },
         { ...box.my.MLService.status },
         { ...box.my.Database.status }
       ];
@@ -175,17 +176,14 @@ new Sandbox(MY_SERVICES, async function(box) {
             items: feedItems,
           };
 
-          //console.log({ canonicalizedFeed });
-          // this is where we categorize
-          //const categorizedFeed = await categorizeFeed(canonicalizedFeed.items);
+          const categorizedFeed = await categorizeFeed(canonicalizedFeed.items);
 
           await box.my.Cache.set({
             key: `feed.${feedName}.canonical`,
-            // value: JSON.stringify({ feed: feedName, items: categorizedFeed }),
-            value: JSON.stringify(canonicalizedFeed)
+            value: JSON.stringify({ feed: feedName, items: categorizedFeed }),
           });
 
-          await box.my.MLService.DataSink.push({ bucketPath: 'training/raw/feeds', data: canonicalizedFeed });
+          //await box.my.MLService.DataSink.push({ bucketPath: 'training/raw/feeds', data: canonicalizedFeed });
           return;
         }
         console.info(
@@ -206,10 +204,9 @@ new Sandbox(MY_SERVICES, async function(box) {
     async function categorizeFeed(feedList) {
       const categorizedFeed = feedList.map(async (item) => {
         const category = await box.my.MLService.Classification.classify(ML_TASKS.FEED_CATEGORIZATION, item);
-        item.category.push(category);
-        
-        return item;
+        return Object.assign(item, { category: [category] });
       }); 
+
       return Promise.all(categorizedFeed);
     }
 
