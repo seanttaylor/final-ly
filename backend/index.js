@@ -9,7 +9,6 @@ import { core, services, providers } from './src/services.js';
 
 /* eslint-disable no-unused-vars */
 import { ISandbox, IEvent } from './src/interfaces.js';
-import { ML_TASKS } from './src/types/ml-task.js';
 
 /* eslint-enable no-unused-vars */
 
@@ -203,7 +202,7 @@ new Sandbox(MY_SERVICES, async function(box) {
      */
     async function categorizeFeed(feedList) {
       const categorizedFeed = feedList.map(async (item) => {
-        const category = await box.my.MLService.Classification.classify(ML_TASKS.FEED_CATEGORIZATION, item);
+        const category = await box.my.MLService.Classification.classify(item);
         return Object.assign(item, { category: [category] });
       }); 
 

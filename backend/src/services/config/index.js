@@ -18,7 +18,9 @@ export class Configuration extends ApplicationService {
     get keys() {
         return {
             SUPABASE_URL: process.env.SUPABASE_URL,
-            SUPABASE_KEY: process.env.SUPABASE_KEY
+            SUPABASE_KEY: process.env.SUPABASE_KEY,
+            HF_ACCESS_TOKEN: process.env.HF_ACCESS_TOKEN,
+            HF_INFERENCE_ENDPOINT: process.env.HF_INFERENCE_ENDPOINT
         }
     }
 
@@ -28,7 +30,7 @@ export class Configuration extends ApplicationService {
     get vars() {
         return {
             // Just Cors is a proxy which adds CORS headers to the proxied request. See https://justcors.com/ 
-            JUST_CORS: 'https://justcors.com/tl_6687fd7/',
+            JUST_CORS: 'https://justcors.com/tl_a809ce5/',
             PORT: 8080,
             OBJECT_DATA_SINK_BUCKET_NAME: '/training',
             OBJECT_DATA_SINK_FEEDS_PATH: '/categorization/feeds',

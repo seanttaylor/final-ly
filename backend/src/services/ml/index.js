@@ -1,7 +1,6 @@
 import path from 'path';
 import { CronJob } from 'cron';
 import { stripHtml } from 'string-strip-html';
-import { pipeline } from '@huggingface/transformers';
 
 import { ApplicationService } from '../../types/application.js';
 import { JSONDataSink } from './json-data-sink.js';
@@ -9,9 +8,6 @@ import { ObjectDataSink } from './object-data-sink.js';
 import { SystemEvent, Events } from '../../types/system-event.js';
 
 import { SinkValidationProvider } from './sink-validation-provider.js';
-import { ML_TASKS } from '../../types/ml-task.js';
-
-const modelMap = { [ML_TASKS.FEED_CATEGORIZATION]: 'seanttaylor/autotrain-6tl3q-3gl0i' };
 
 /**
  * 
@@ -70,19 +66,28 @@ export class MLService extends ApplicationService {
 
   Classification = {
     /**
-     * @param {String} taskType - name of the task associated with the classification query
      * @param {Object} item - a feed item to classify
      * @returns {Promise<Object>}
      */
-    async classify(taskType, item) {
-      //const pipe = pipeline('text-classification', modelMap[taskType]);
-      //const result = await pipe(item.category);
+    classify: (async (item) => {
+      const url = this.#sandbox.my.Config.keys.HF_INFERENCE_ENDPOINT;
+      const accessToken = this.#sandbox.my.Config.keys.HF_ACCESS_TOKEN;
+      const response = await fetch(url, {
+        headers: { 
+          "Accept" : "application/json",
+          "Authorization": `Bearer ${accessToken}`,
+          "Content-Type": "application/json" 
+        },
+        method: "POST",
+        body: JSON.stringify({
+          inputs: item.title,
+          parameters: {}
+        }),
+      });
 
-      return {
-        label: 'foobar',
-        score: 0.9
-      };
-    }
+      const [result] = await response.json();
+      return { ...result };
+    }).bind(this)
   }
 
   /**
