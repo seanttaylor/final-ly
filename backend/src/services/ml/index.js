@@ -72,21 +72,30 @@ export class MLService extends ApplicationService {
     classify: (async (item) => {
       const url = this.#sandbox.my.Config.keys.HF_INFERENCE_ENDPOINT;
       const accessToken = this.#sandbox.my.Config.keys.HF_ACCESS_TOKEN;
-      const response = await fetch(url, {
-        headers: { 
-          "Accept" : "application/json",
-          "Authorization": `Bearer ${accessToken}`,
-          "Content-Type": "application/json" 
-        },
-        method: "POST",
-        body: JSON.stringify({
-          inputs: item.title,
-          parameters: {}
-        }),
-      });
-
-      const [result] = await response.json();
-      return { ...result };
+      
+      try {
+        const response = await fetch(url, {
+          headers: { 
+            "Accept" : "application/json",
+            "Authorization": `Bearer ${accessToken}`,
+            "Content-Type": "application/json" 
+          },
+          method: "POST",
+          body: JSON.stringify({
+            inputs: item.title,
+            parameters: {}
+          }),
+        });
+  
+        const [result] = await response.json();
+        return { ...result };
+      } catch (ex) {
+        this.#logger.error(`INTERNAL_ERROR (MlService): Exception encountered during feed item category classification. ENSURE HUGGING FACE INFERENCE ENDPOINT IS UP/RUNNING to classify feed items. This is the **MOST COMMON REASON** for this exception. See details -> ${ex.message}`);
+        return {
+          label: 'unknown',
+          score: 0
+        }
+      }
     }).bind(this)
   }
 

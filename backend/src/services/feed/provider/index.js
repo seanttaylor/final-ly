@@ -111,6 +111,19 @@ export class PatchProvider extends ApplicationService {
     super();
   }
 
+  /**
+   * A post-processing module used to hack around the idiosyncrasies of JSON Patch which
+   * caused the image URLs from feed items to be duplicated; is
+   * an answer to issue https://github.com/seanttaylor/final-ly/issues/3
+   */
+  PostPatch = {
+    vanityfair: (item) => {
+      item.thumbnail.url = item['media:thumbnail']['url'];
+      delete item['media:thumbnail'];
+      return Object.assign({}, item);
+    }
+  }
+
   abc = [
     { op: 'add', path: '/html', value: null },
     { op: 'add', path: '/thumbnail', value: { url: null } },
@@ -529,10 +542,10 @@ export class PatchProvider extends ApplicationService {
     { op: 'add', path: '/thumbnail', value: { url: null } },
     { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/source', value: 'Vanity Fair' },
-    { op: 'copy', from: '/media:thumbnail/url', path: '/thumbnail/url' },
+    //{ op: 'copy', from: '/media:thumbnail/url', path: '/thumbnail/url' },
     { op: 'move', from: '/dc:creator', path: '/author' },
     { op: 'remove', path: '/guid' },
-    { op: 'remove', path: '/media:thumbnail' },
+    //{ op: 'remove', path: '/media:thumbnail' },
     { op: 'remove', path: '/media:content' },
     { op: 'remove', path: '/media:keywords' },
     { op: 'remove', path: '/dc:publisher' },
