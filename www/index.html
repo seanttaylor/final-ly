@@ -75,18 +75,140 @@
       .ion-page {
         display: initial
       }
+      .thumbnail {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border-radius: 8px;
+      }
+      .thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      ion-card-title {
+        font-size: 1.25rem;
+      }
+      ion-thumbnail {
+        --size: 140px;
+      }
+      ion-footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        z-index: 999; 
+      }
+      ion-content::part(scroll) {
+        padding-bottom: 100px; /* Adjust this value to match your footer's height */
+      }
     </style>
   
     <title>Mobile App</title>
   </head>
   <body>
     <ion-app>
-      <ion-router id="router" use-hash="true">
-        <ion-route url="/" component="page-signin"></ion-route>
-        <ion-route url="/home" component="page-home"></ion-route>
-      </ion-router>
-  
-      <ion-nav></ion-nav>
+      <ion-menu content-id="home-page">
+        <ion-header>
+          <ion-toolbar>
+            <ion-title></ion-title>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+          <ion-list>
+            <ion-item>
+              <ion-label>Account</ion-label>
+            </ion-item>
+            <ion-item>
+             <ion-label>Settings</ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>Logout</ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-content>
+      </ion-menu>
+
+
+      <ion-tabs>
+  <ion-tab tab="home">
+    <div class="ion-page" id="home-page">
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+          <ion-title>Current.ly</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding"> 
+        <currently-feed></currently-feed>
+      </ion-content>
+    </div>
+  </ion-tab>
+  <ion-tab tab="radio">
+    <div id="radio-page">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Trends</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <div class="example-content">Trends content</div>
+      </ion-content>
+    </div>
+  </ion-tab>
+  <ion-tab tab="library">
+    <div id="library-page">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Library</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <div class="example-content">Library content</div>
+      </ion-content>
+    </div>
+  </ion-tab>
+  <!--<ion-tab tab="search">
+    <div id="search-page">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Search</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <div class="example-content">Search content</div>
+      </ion-content>
+    </div>
+  </ion-tab>-->
+
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="home">
+      <ion-icon name="albums-outline"></ion-icon>
+      Feed
+    </ion-tab-button>
+    <ion-tab-button tab="radio">
+      <ion-icon name="analytics-outline"></ion-icon>
+      Trending
+    </ion-tab-button>
+    <ion-tab-button tab="library">
+      <ion-icon name="library"></ion-icon>
+      Library
+    </ion-tab-button>
+    <!--<ion-tab-button tab="search">
+      <ion-icon name="search"></ion-icon>
+      Search
+    </ion-tab-button>-->
+  </ion-tab-bar>
+</ion-tabs>
+
+      <!--<ion-footer>
+        <ion-toolbar>
+          <ion-title>Footer</ion-title>
+        </ion-toolbar>
+      </ion-footer>-->
+      <!--<ion-nav></ion-nav>-->
     </ion-app>
   
     <script type="module">
@@ -135,70 +257,11 @@
       class PageHome extends HTMLElement {
         connectedCallback() {
           this.innerHTML = `
-            <currently-feed></currently-feed>
-            <ion-menu side="start" menu-id="main-menu" content-id="main-content">
-              <ion-header>
-                  <ion-toolbar>
-                    <ion-title>Menu</ion-title>
-                  </ion-toolbar>
-              </ion-header>
-              <ion-content>
-                  <ion-list>
-                    <ion-item button>Account</ion-item>
-                    <ion-item button>Settings</ion-item>
-                    <ion-item button>Signout</ion-item>
-                  </ion-list>
-              </ion-content>
-            </ion-menu>
-            <div class="ion-page" id="main-content">
-              <ion-header>
-                  <ion-toolbar>
-                    <ion-buttons slot="start">
-                        <ion-menu-button></ion-menu-button>
-                    </ion-buttons>
-                    <ion-title>Home</ion-title>
-                  </ion-toolbar>
-              </ion-header>
-              <ion-content class="ion-padding">
-                  <ion-item x-currently>
-                    <ion-thumbnail slot="start">
-                        <ion-skeleton-text animated="true"></ion-skeleton-text>
-                    </ion-thumbnail>
-                    <ion-label>
-                        <h3>
-                          <ion-skeleton-text animated="true" style="width: 80%;"></ion-skeleton-text>
-                        </h3>
-                        <p>
-                          <ion-skeleton-text animated="true" style="width: 60%;"></ion-skeleton-text>
-                        </p>
-                        <p>
-                          <ion-skeleton-text animated="true" style="width: 30%;"></ion-skeleton-text>
-                        </p>
-                    </ion-label>
-                  </ion-item>
-                  <ion-item x-currently>
-                    <ion-thumbnail slot="start">
-                        <ion-skeleton-text animated="true"></ion-skeleton-text>
-                    </ion-thumbnail>
-                    <ion-label>
-                        <h3>
-                          <ion-skeleton-text animated="true" style="width: 80%;"></ion-skeleton-text>
-                        </h3>
-                        <p>
-                          <ion-skeleton-text animated="true" style="width: 60%;"></ion-skeleton-text>
-                        </p>
-                        <p>
-                          <ion-skeleton-text animated="true" style="width: 30%;"></ion-skeleton-text>
-                        </p>
-                    </ion-label>
-                  </ion-item>
-              </ion-content>
-            </div>
+          
           `;
         }
       }
 
-  
       customElements.define('page-signin', PageSignin);
       customElements.define('page-home', PageHome);
     </script>

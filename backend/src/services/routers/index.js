@@ -28,6 +28,8 @@ export class RouteService extends ApplicationService {
     const events = this.#sandbox.my.Events;
     const config = this.#sandbox.my.Config;
     const cache = this.#sandbox.my.Cache;
+    const logger = this.#sandbox.core.logger.getLoggerInstance();
+
     const SubscriptionService = this.#sandbox.my.SubscriptionService;
     const UserService = this.#sandbox.my.UserService;
 
@@ -36,6 +38,7 @@ export class RouteService extends ApplicationService {
       cache,
       config, 
       events, 
+      logger,
       UserService 
     });
     this.Subscription = new SubscriptionRouter({ 

@@ -31,7 +31,7 @@ export class FeedService extends ApplicationService {
      */
     async getFeed() {
       try {
-        const response = await fetch(`${this.#sandbox.my.Config.vars.BACKEND_URL}/feeds/17ef5a1f-f61b-4de0-90fd-408321f21072`);
+        const response = await fetch(`${this.#sandbox.my.Config.vars.BACKEND_URL}/feeds/050a4d06-4f31-42e2-b0fe-07e1838179f8`);
         const body =  await response.json();
 
         return {

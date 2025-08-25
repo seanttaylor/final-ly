@@ -20,13 +20,72 @@ export const UIFeed = {
         return class UIFeed extends HTMLElement {
             connectedCallback() {
                 this.innerHTML =`<span></span>`;
-                sandbox.my.Events.dispatchEvent(new SystemEvent(Events.FEED_COMPONENT_INITIALIZED, {}));
-                // MAYBE this.addEventListener(ui.components.feed.update_ready, this.onComponentUpdate.bind(this))
+                this.renderInitialState();
+                setTimeout(() => {
+                    sandbox.my.Events.dispatchEvent(new SystemEvent(Events.FEED_COMPONENT_INITIALIZED, {}));
+                }, 0);
             }
         
             onComponentUpdate(data) {
                 console.log('updating...', data);
+                this.innerHTML = `
+                <ion-list>
+                    ${data.items
+                    .map(
+                        (item) => `
+                        <ion-item>
+                            <ion-card>
+                            <ion-thumbnail>
+                                <img alt="" src="${item.thumbnail.url}" style="margin-top: 15px; margin-left: 20px; box-shadow: 1px 1px 3px 1px #636469; border-radius: 3px;" />
+                            </ion-thumbnail>
+  <ion-card-header>
+    <ion-card-title>${item.title}</ion-card-title>
+    <ion-card-subtitle>${item.source} | ${new Date(item.publicationDate).toLocaleString().split(",")[0]}</ion-card-subtitle>
+  </ion-card-header>
+
+  <ion-card-content>
+        ${this.truncate(item.description, 100)}
+  </ion-card-content>
+</ion-card>
+                        </ion-item>
+                        `
+                    )
+                    .join('')}
+                </ion-list>
+                
+                `;
             }
+
+            renderInitialState() {
+                this.innerHTML = `
+                <ion-list>
+                    ${Array(5).fill(0).map(() => `
+                    <ion-item style="margin-bottom: 5px;">
+                        <ion-thumbnail slot="start">
+                        <ion-skeleton-text animated></ion-skeleton-text>
+                        </ion-thumbnail>
+                        <ion-label>
+                        <h3>
+                            <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+                        </h3>
+                        <p>
+                            <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+                        </p>
+                        <p>
+                            <ion-skeleton-text animated style="width: 30%"></ion-skeleton-text>
+                        </p>
+                        </ion-label>
+                    </ion-item>
+                    `).join('')}
+                </ion-list>
+                `;
+            }
+
+            truncate(input, length) { 
+                if (input.length <= length) return input; 
+                if (length < 3) return input.substring(0, length); 
+                return input.substring(0, length - 3) + '...'; 
+            } 
         }
     }
 }

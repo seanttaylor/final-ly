@@ -147,7 +147,7 @@ new Sandbox(MY_SERVICES, async function(box) {
         // it *SHOULDN'T* be undefined because the `payload.key` is the feed that was cached before the `FEED_UPDATED` event fires
         if (box.my.PatchProvider[feedName]) {
           const cachedRecord = await box.my.Cache.get(payload.key);
-          const feed = JSON.parse(cachedRecord);
+          const feed = Object.assign({}, JSON.parse(cachedRecord));
           
           const feedItems = feed.rss.channel.item.map((item) => {
             let patchSchema;
@@ -158,8 +158,8 @@ new Sandbox(MY_SERVICES, async function(box) {
                 patchSchema = box.my.PatchProvider[feedName];
               }
               let patchedItem = jsonpatch.applyPatch(
-                item,
-                patchSchema
+                Object.assign({}, item),
+                patchSchema,
               ).newDocument;
 
               return patchedItem;
@@ -168,6 +168,11 @@ new Sandbox(MY_SERVICES, async function(box) {
               );
               return;
             }
+          }).map((item) => {
+            if (box.my.PatchProvider.PostPatch[feedName]) {
+              return box.my.PatchProvider.PostPatch[feedName](structuredClone(item));
+            }
+            return item;
           });
 
           const canonicalizedFeed = {
