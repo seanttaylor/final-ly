@@ -128,13 +128,13 @@ export const Feeds = {
     //   URL: 'https://feeds.npr.org/1001/rss.xml',
     //   refreshType: 'pull',
     // },
-    // nytimes: {
-    //   world: {
-    //     name: 'nytimes_world',
-    //     URL: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
-    //     refreshType: 'pull',
-    //   },
-    // },
+    nytimes: {
+      world: {
+        name: 'nytimes_world',
+        URL: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
+        refreshType: 'pull',
+      },
+    },
     // politico: {
     //   name: 'politico',
     //   URL: 'https://www.politico.com/rss/politicopicks.xml',
