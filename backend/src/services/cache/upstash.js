@@ -4,51 +4,53 @@ import { Redis } from '@upstash/redis'
 const DEFAULT_TTL_MILLIS = 86400000; // 24 hours
 
 export class Upstash extends SimpleCache {
-    #logger;
-    #redis;
-    #sandbox;
-    
-    constructor(sandbox) {
-        super();
-        this.#sandbox = sandbox;
-        this.#logger = sandbox.core.logger.getLoggerInstance();
-        
-        const { UPSTASH_URL, UPSTASH_TOKEN } = sandbox.my.Config.keys; 
+  #logger;
+  #redis;
+  #sandbox;
 
-        this.#redis = new Redis({
-            url: UPSTASH_URL,
-            token: UPSTASH_TOKEN,
-        });
-    }
+  constructor(sandbox) {
+    super();
+    this.#sandbox = sandbox;
+    this.#logger = sandbox.core.logger.getLoggerInstance();
 
-    get status() {
-        return {
-            name: this.constructor.name,
-            timestamp: new Date().toISOString()
-        }
-    }
+    const { UPSTASH_URL, UPSTASH_TOKEN } = sandbox.my.Config.keys;
 
-    async set({ key, value, ttl = DEFAULT_TTL_MILLIS }) {
-        memoryCache.put(key, value, ttl);
-    }
+    this.#redis = new Redis({
+      url: UPSTASH_URL,
+      token: UPSTASH_TOKEN,
+    });
+  }
 
-    get(key) {
-        return memoryCache.get(key);
-    }
+  get status() {
+    return {
+      name: this.constructor.name,
+      timestamp: new Date().toISOString(),
+    };
+  }
 
-    deleteEntry(key) {
-        memoryCache.del(key);
-    }
+  async set({ key, value, ttl = DEFAULT_TTL_MILLIS }) {
+    const ttlSeconds = Math.floor(ttl / 1000);
+    await this.#redis.set(key, value, { ex: ttlSeconds });
+  }
 
-    clear() {
-        memoryCache.clear();
-    }
+  async get(key) {
+    return await this.#redis.get(key);
+  }
 
-    has(key) {
-        return memoryCache.keys().includes(key);
-    }
+  async deleteEntry(key) {
+    await this.#redis.del(key);
+  }
 
-    keys() {
-        return memoryCache.keys();
-    }
+  async clear() {
+    await this.#redis.flushdb();
+  }
+
+  async has(key) {
+    const exists = await this.#redis.exists(key);
+    return exists === 1;
+  }
+
+  async keys(pattern = '*') {
+    return await this.#redis.keys(pattern);
+  }
 }

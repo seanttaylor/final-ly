@@ -72,6 +72,13 @@ export class MLService extends ApplicationService {
     classify: (async (item) => {
       const url = this.#sandbox.my.Config.keys.HF_INFERENCE_ENDPOINT;
       const accessToken = this.#sandbox.my.Config.keys.HF_ACCESS_TOKEN;
+
+      if (!this.#sandbox.my.Config.featureFlags.MLService.FEED_ITEM_CATEGORY_CLASSIFICATION_ENABLED) {
+        return {
+          label: 'unknown',
+          score: 0
+        }
+      }
       
       try {
         const response = await fetch(url, {

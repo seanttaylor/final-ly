@@ -1,4 +1,5 @@
 import { ApplicationService } from '../../types/application.js';
+import { MLService } from '../ml/index.js';
 import { Feeds } from './feeds.js';
 
 /**
@@ -10,6 +11,17 @@ export class Configuration extends ApplicationService {
     constructor(sandbox) {
         super();
         this.#sandbox = sandbox;
+    }
+
+    /**
+     * @returns {Object}
+     */
+    get featureFlags() {
+        return {
+            MLService: {
+                FEED_ITEM_CLASSIFICATION_ENABLED: process.env.ML_SERVICE_FEED_ITEM_CLASSIFICATION_ENABLED
+            }
+        }
     }
 
     /**
@@ -32,7 +44,7 @@ export class Configuration extends ApplicationService {
     get vars() {
         return {
             // Just Cors is a proxy which adds CORS headers to the proxied request. See https://justcors.com/ 
-            JUST_CORS: 'https://justcors.com/tl_b965c80/',
+            JUST_CORS: 'https://justcors.com/tl_235dac2/',
             PORT: 8080,
             OBJECT_DATA_SINK_BUCKET_NAME: '/training',
             OBJECT_DATA_SINK_FEEDS_PATH: '/categorization/feeds',

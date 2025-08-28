@@ -19,7 +19,8 @@ import { RouteService } from './src/services/routers/index.js';
 import { FeedService, FeedMonitor } from './src/services/feed/index.js';
 
 import { FeedProvider} from './src/services/feed/provider/index.js';
-import { MemoryCache } from './src/services/cache/memory.js';
+//import { MemoryCache } from './src/services/cache/memory.js';
+import { Upstash } from './src/services/cache/upstash.js';
 import { NOOPService } from './src/services/noop/index.js';
 import { PatchProvider } from './src/services/feed/provider/index.js';
 
@@ -37,7 +38,7 @@ Sandbox.modules.of('Config', Configuration);
 Sandbox.modules.of('Events', Xevents);
 
 Sandbox.modules.of('FeedProvider', FeedProvider);
-Sandbox.modules.of('Cache', MemoryCache);
+Sandbox.modules.of('Cache', Upstash);
 Sandbox.modules.of('FeedService', FeedService);
 Sandbox.modules.of('FeedMonitor', FeedMonitor);
 
@@ -146,8 +147,8 @@ new Sandbox(MY_SERVICES, async function(box) {
         // what happens if `cachedRecord` is undefined?
         // it *SHOULDN'T* be undefined because the `payload.key` is the feed that was cached before the `FEED_UPDATED` event fires
         if (box.my.PatchProvider[feedName]) {
-          const cachedRecord = await box.my.Cache.get(payload.key);
-          const feed = Object.assign({}, JSON.parse(cachedRecord));
+          const feed = await box.my.Cache.get(payload.key);
+          //const feed = Object.assign({}, JSON.parse(cachedRecord));
           
           const feedItems = feed.rss.channel.item.map((item) => {
             let patchSchema;
@@ -221,19 +222,22 @@ new Sandbox(MY_SERVICES, async function(box) {
     async function onFeedsRefreshed(event) {
       setTimeout(async () => {
         console.log(event);
-        // get recently updated canonicalized feeds
-        //console.log(box.my.Cache.keys())
-        const updatedFeedNames = box.my.Cache.keys().filter((k) => k.includes('canonical'));
-        const updatedFeeds = updatedFeedNames.map(async (key) => {
-          return JSON.parse(await box.my.Cache.get(key));
-        });
+        
+        try {
+          const updatedFeedNames = (await box.my.Cache.keys()).filter((k) => k.includes('canonical'));
+          const updatedFeeds = updatedFeedNames.map(async (key) => {
+            return (await box.my.Cache.get(key));
+          });
+    
+          const feedList = await Promise.all(updatedFeeds);      
+          //console.log({feedList});
   
-        const feedList = await Promise.all(updatedFeeds);      
-        //console.log({feedList});
-
-        // do all the post-processing of feeds
-        // sorting, scoring, ranking, summarizing, etc.
-
+          // do all the post-processing of feeds
+          // sorting, scoring, ranking, summarizing, etc.
+  
+        } catch(ex) {
+          console.error(`INTERNAL_ERROR (Main): Exception encountered while refreshing feeds. See details -> ${ex.message}`);
+        }
       }, 0);
     }
   

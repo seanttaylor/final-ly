@@ -1,6 +1,6 @@
 import { ApplicationService } from '../../types/application.js';
 import { SystemEvent, Events } from '../../types/system-event.js';
-import { Result } from '../../types/result.js';
+import { Result, AsyncResult } from '../../types/result.js';
 
 /**
  * Manages platform users
@@ -27,13 +27,20 @@ export class UserService extends ApplicationService {
    * @param {Object[]} feedList - list of feeds to fetch from the cache
    * @returns {Object[]}
    */
-  #buildUserFeed(feedList) {
-    return feedList.reduce((result, item) => {
-      const key = `feed.${item.name}.canonical`;
-      const feed = JSON.parse(this.#cache.get(key));
-      result.push(...feed.items);
-      return result;
-    }, []);
+  async #buildUserFeed(feedList) {
+    try { 
+      const allFeeds = feedList.map(async (item) => {
+        const key = `feed.${item.name}.canonical`;
+        const feed = await this.#cache.get(key);
+        return feed;
+      });
+      const f = await Promise.all(allFeeds)
+      return f;
+
+    } catch(ex) {
+      this.#logger.log(`INTERNAL_ERROR (UserService): **EXCEPTION ENCOUNTERED** while building user feed. See details -> ${ex.message}`);
+      return AsyncResult.error(ex);
+    }
   }
 
   /**
@@ -42,14 +49,19 @@ export class UserService extends ApplicationService {
    * @param {Object[]} feedList - list of feeds fetched from the cache
    * @returns {Object[]}
    */
-  #sortUserFeed(categoryRanking, feedList) {
-    return feedList.sort((prevItem, nextItem) => {
-      const [prevCategory] = prevItem.category;
-      const [nextCategory] = nextItem.category;
-
-      // We we turn on categorization post-fetch, feed items **WILL** have a label prop, then we can remove the (?)
-      return (categoryRanking[prevCategory?.label] || 0) - (categoryRanking[nextCategory?.label] || 0);
-    });
+  async #sortUserFeed(categoryRanking, feedList) {
+    try {
+      return feedList.sort((prevItem, nextItem) => {
+        const [prevCategory] = prevItem.category;
+        const [nextCategory] = nextItem.category;
+  
+        // We we turn on categorization post-fetch, feed items **WILL** have a label prop, then we can remove the (?)
+        return (categoryRanking[prevCategory?.label] || 0) - (categoryRanking[nextCategory?.label] || 0);
+      });
+    } catch(ex) {
+      this.#logger.log(`INTERNAL_ERROR (UserService): **EXCEPTION ENCOUNTERED** while sorting user feed. See details -> ${ex.message}`);
+      return AsyncResult.error(ex);
+    }
   }
 
   /** 
@@ -85,8 +97,13 @@ export class UserService extends ApplicationService {
       const { categoryRanking } = (await this.getUserPreferences(user_id)).getValue();
       const userSubscriptions = await this.#sandbox.my.SubscriptionService.getSubscriptions(user_id);
      
-      const finalizedUserFeed = userSubscriptions.map(this.#buildUserFeed.bind(this))
-      .map(this.#sortUserFeed.bind(this, categoryRanking));
+      const finalizedUserFeed = await AsyncResult.ok(userSubscriptions)
+      .map(this.#buildUserFeed.bind(this))
+      .map(this.#sortUserFeed.bind(this, categoryRanking))
+      .run();
+
+      // const finalizedUserFeed = userSubscriptions.map(this.#buildUserFeed.bind(this))
+      // .map(this.#sortUserFeed.bind(this, categoryRanking));
 
       if (!finalizedUserFeed.isOk()) {
         this.#logger.log(`INTERNAL_ERROR (UserService): Error occurred while finalizing the user feed. See details -> ${finalizedUserFeed.error}`);
