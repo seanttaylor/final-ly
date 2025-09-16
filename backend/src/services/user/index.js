@@ -22,7 +22,6 @@ export class UserService extends ApplicationService {
     this.#dbClient = sandbox.my.Database.getClient();
   }
 
-
   /**
    * @param {Object[]} feedList - list of feeds to fetch from the cache
    * @returns {Object[]}
@@ -34,8 +33,13 @@ export class UserService extends ApplicationService {
         const feed = await this.#cache.get(key);
         return feed;
       });
-      const f = await Promise.all(allFeeds)
-      return f;
+      const f = (await Promise.all(allFeeds)).filter(Boolean);
+
+      // See issue no. 8 to refactor this block
+      return f.reduce((result, curr) => {
+        result.items.push(...curr.items);
+        return result;
+      }, { items: [] });
 
     } catch(ex) {
       this.#logger.log(`INTERNAL_ERROR (UserService): **EXCEPTION ENCOUNTERED** while building user feed. See details -> ${ex.message}`);
@@ -51,13 +55,15 @@ export class UserService extends ApplicationService {
    */
   async #sortUserFeed(categoryRanking, feedList) {
     try {
-      return feedList.sort((prevItem, nextItem) => {
+      feedList.items = feedList.items.sort((prevItem, nextItem) => {
         const [prevCategory] = prevItem.category;
         const [nextCategory] = nextItem.category;
   
         // We we turn on categorization post-fetch, feed items **WILL** have a label prop, then we can remove the (?)
         return (categoryRanking[prevCategory?.label] || 0) - (categoryRanking[nextCategory?.label] || 0);
       });
+
+      return feedList;
     } catch(ex) {
       this.#logger.log(`INTERNAL_ERROR (UserService): **EXCEPTION ENCOUNTERED** while sorting user feed. See details -> ${ex.message}`);
       return AsyncResult.error(ex);
@@ -75,13 +81,13 @@ export class UserService extends ApplicationService {
       .eq('id', user_id);
 
       if (preferencesError) {
-        this.#logger.log(`INTERNAL_ERROR (UserService): Error occurred while fetching user preferences. See details -> ${preferencesError.message}`);
+        this.#logger.error(`INTERNAL_ERROR (UserService): Error occurred while fetching user preferences. See details -> ${preferencesError.message}`);
         return Result.error(preferencesError.message);
       }
 
       return Result.ok(preferences);
     } catch(ex) {
-      this.#logger.log(`INTERNAL_ERROR (UserService): **EXCEPTION ENCOUNTERED** while fetching user preferences. See details -> ${ex.message}`);
+      this.#logger.error(`INTERNAL_ERROR (UserService): **EXCEPTION ENCOUNTERED** while fetching user preferences. See details -> ${ex.message}`);
       return Result.error(ex);
     }
   }
@@ -101,9 +107,6 @@ export class UserService extends ApplicationService {
       .map(this.#buildUserFeed.bind(this))
       .map(this.#sortUserFeed.bind(this, categoryRanking))
       .run();
-
-      // const finalizedUserFeed = userSubscriptions.map(this.#buildUserFeed.bind(this))
-      // .map(this.#sortUserFeed.bind(this, categoryRanking));
 
       if (!finalizedUserFeed.isOk()) {
         this.#logger.log(`INTERNAL_ERROR (UserService): Error occurred while finalizing the user feed. See details -> ${finalizedUserFeed.error}`);

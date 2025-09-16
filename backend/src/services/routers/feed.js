@@ -1,9 +1,12 @@
 import express from 'express';
+import { FeedResource } from '../../types/resource.js';
+import { Result } from '../../types/result.js';
 
 /**
  * Router exposing endpoints for fetching user feeds
  */
 export class FeedRouter {
+  #cache;
   #logger;
 
   /**
@@ -15,6 +18,7 @@ export class FeedRouter {
    */
   constructor(options) {
     const router = express.Router();
+    this.#cache = options.cache;
     this.#logger = options.logger;
 
     /**
@@ -22,10 +26,20 @@ export class FeedRouter {
      */
     router.get('/feeds/:id', async (req, res, next) => {
       try {
-
         res.set('Access-Control-Expose-Headers', 'ETag');
-        // Here we will need to instrument a UserService for getting user's combined feed
-        // containing all subscribed feeds
+        const requestETag = req.headers['etag'];
+        const feedResource = new FeedResource();
+
+        if (await this.#cache.has(requestETag)) {
+          const cachedRecord = await this.#cache.get(requestETag);
+          feedResource.set(Result.ok(cachedRecord));
+          res.set('ETag', requestETag);
+          res.set('X-Total-Count', feedResource.count);
+          res.status(304);
+          res.json(feedResource);
+          return;
+        }
+
         const userFeed = await options.UserService.getFeed(req.params.id);
         
         if (!userFeed.isOk()) {
@@ -34,13 +48,15 @@ export class FeedRouter {
           next(new Error(userFeed.error));
           return;
         }
-      
-        const feed = JSON.parse(options.cache.get('feed.vanityfair.canonical'));
-        res.set('X-Total-Count', feed.items.length);
 
-        res.json({
-          items: feed.items,
-          error: null
+        feedResource.set(userFeed);
+        res.set('X-Total-Count', feedResource.count);
+        res.json(feedResource);
+
+        const resourceETag = res.get('etag');
+        await this.#cache.set({ 
+          key: resourceETag, 
+          value: feedResource.toJSON() 
         });
 
       } catch(ex) {

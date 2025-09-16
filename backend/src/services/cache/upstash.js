@@ -1,7 +1,8 @@
 import { SimpleCache } from './index.js';
 import { Redis } from '@upstash/redis'
 
-const DEFAULT_TTL_MILLIS = 86400000; // 24 hours
+//const DEFAULT_TTL_MILLIS = 86400000; // 24 hours
+const DEFAULT_TTL_MILLIS = 7200000  // 2 hours
 
 export class Upstash extends SimpleCache {
   #logger;
@@ -29,6 +30,10 @@ export class Upstash extends SimpleCache {
   }
 
   async set({ key, value, ttl = DEFAULT_TTL_MILLIS }) {
+    if (!key || !value) {
+      return;
+    }
+    
     const ttlSeconds = Math.floor(ttl / 1000);
     await this.#redis.set(key, value, { ex: ttlSeconds });
   }
@@ -46,6 +51,10 @@ export class Upstash extends SimpleCache {
   }
 
   async has(key) {
+    if (!key) {
+      return false;
+    }
+
     const exists = await this.#redis.exists(key);
     return exists === 1;
   }

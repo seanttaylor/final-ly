@@ -112,7 +112,7 @@ export class PatchProvider extends ApplicationService {
   }
 
   /**
-   * A post-processing module used to hack around the idiosyncrasies of JSON Patch which
+   * A post-processing module used to hack around the idiosyncrasies of JSON Patch and XML which
    * caused the image URLs from feed items to be duplicated; is
    * an answer to issue https://github.com/seanttaylor/final-ly/issues/3
    */
@@ -121,6 +121,14 @@ export class PatchProvider extends ApplicationService {
       item.thumbnail.url = item['media:thumbnail']['url'];
       delete item['media:thumbnail'];
       return Object.assign({}, item);
+    },
+    nytimes_world: (item) => {
+      if (item['media:content'] && item['media:content']['url']) {
+        item.thumbnail.url = item['media:content']['url'];
+        delete item['media:content'];
+        return Object.assign({}, item);
+      }
+      return item;
     }
   }
 
@@ -419,7 +427,19 @@ export class PatchProvider extends ApplicationService {
     { op: 'remove', path: '/link'}
   ]
 
-  nytimes_world = []
+  nytimes_world = [
+    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/category', value: [] },
+    { op: 'add', path: '/source', value: 'The New York Times' },
+    //{ op: 'copy', from: '/media:content/url', path: '/thumbnail/url'},
+    { op: 'move', from: '/pubDate', path: '/publicationDate' },
+    { op: 'move', from: '/dc:creator', path: '/author' },
+    //{ op: 'remove', path: '/media:content'},
+    { op: 'remove', path: '/atom:link'},
+    { op: 'remove', path: '/guid'},
+    { op: 'remove', path: '/media:credit'},
+    { op: 'remove', path: '/media:description'}
+  ]
 
   npr = [
     { op: 'add', path: '/thumbnail', value: { url: null } },
