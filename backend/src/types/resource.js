@@ -1,5 +1,6 @@
 class Resource {
   pages = 1;
+  offset = 0;
   pageSize;
   date;
   name;
@@ -70,7 +71,7 @@ export class FeedResource extends Resource {
    * @param {Number} options.pageSize
    */
   constructor(options) {
-    super('ice_cream', options);
+    super('rss_feed', options);
   }
 
   /**
@@ -92,17 +93,17 @@ export class FeedResource extends Resource {
 
     this.count = this.#data.length;
     this.pages = Math.ceil(this.count / this.pageSize);
-    this.cursor = this.pageSize;
   }
 
   /**
+   * @param {Number} offset
    * @returns {Object[]}
    */
-  next() {
-    const newCursor = this.pageSize + this.cursor;
-    const records = this.#data.slice(this.cursor, newCursor);
+  next(offset=this.offset) {
+    const newOffset = this.pageSize + offset;
+    const records = this.#data.slice(offset, newOffset);
 
-    this.cursor = newCursor;
+    this.offset = newOffset;
     this.hasNext = Boolean(records.length);
 
     return records;
@@ -120,13 +121,13 @@ export class FeedResource extends Resource {
       ...super.info,
       count: this.count,
       hasNext: this.hasNext,
-      offset: this.cursor,
+      offset: this.offset,
     };
   }
 
   toJSON() {
     if (this.isPaginated) {
-      return this.#data.slice(0, this.cursor);
+      return this.#data.slice(0, this.offset);
     }
 
     return this.#data;
