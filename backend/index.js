@@ -31,6 +31,7 @@ import { Xevents } from './src/services/event/index.js';
 
 import { SubscriptionService } from './src/services/subscription/index.js';
 import { UserService } from './src/services/user/index.js';
+import { MiddlewareProvider } from './src/services/middleware/index.js';
 
 Sandbox.modules.of('HTTPService', HTTPService);
 Sandbox.modules.of('RouteService', RouteService);
@@ -50,6 +51,7 @@ Sandbox.modules.of('UtilityService', UtilityService);
 Sandbox.modules.of('Database', Database);
 Sandbox.modules.of('SubscriptionService', SubscriptionService);
 Sandbox.modules.of('UserService', UserService);
+Sandbox.modules.of('MiddlewareProvider', MiddlewareProvider);
 
 const APP_NAME = 'com.current.ly.backend';
 const APP_VERSION = '0.0.1';

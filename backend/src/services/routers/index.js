@@ -21,9 +21,9 @@ export class RouteService extends ApplicationService {
   constructor(sandbox) {
     super();
     this.#sandbox = sandbox;
-    //this.#sandbox.my.MiddlewareProvider;
+    this.#sandbox.my.MiddlewareProvider;
 
-    //const MiddlewareProvider = this.#sandbox.my.MiddlewareProvider;
+    const MiddlewareProvider = this.#sandbox.my.MiddlewareProvider;
     //const dataAccessLayer = this.#sandbox.my.DataAccessLayer;
     const events = this.#sandbox.my.Events;
     const config = this.#sandbox.my.Config;
@@ -39,7 +39,8 @@ export class RouteService extends ApplicationService {
       config, 
       events, 
       logger,
-      UserService 
+      UserService,
+      MiddlewareProvider 
     });
     this.Subscription = new SubscriptionRouter({ 
       config, 

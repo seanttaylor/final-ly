@@ -71,7 +71,7 @@ export class FeedResource extends Resource {
    * @param {Number} options.pageSize
    */
   constructor(options) {
-    super('rss_feed', options);
+    super('current_ly_feed_items', options);
   }
 
   /**
