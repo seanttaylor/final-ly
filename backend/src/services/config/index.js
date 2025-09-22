@@ -1,3 +1,4 @@
+import { ISandbox } from '../../interfaces.js';
 import { ApplicationService } from '../../types/application.js';
 import { MLService } from '../ml/index.js';
 import { Feeds } from './feeds.js';
@@ -6,55 +7,58 @@ import { Feeds } from './feeds.js';
  *
  */
 export class Configuration extends ApplicationService {
-    #sandbox;
-  
-    constructor(sandbox) {
-        super();
-        this.#sandbox = sandbox;
-    }
+  #sandbox;
 
-    /**
-     * @returns {Object}
-     */
-    get featureFlags() {
-        return {
-            MLService: {
-                FEED_ITEM_CLASSIFICATION_ENABLED: process.env.ML_SERVICE_FEED_ITEM_CLASSIFICATION_ENABLED
-            }
-        }
-    }
+  /**
+   * @param {ISandbox}
+   */
+  constructor(sandbox) {
+    super();
+    this.#sandbox = sandbox;
+  }
 
-    /**
-     * @returns {Object}
-     */
-    get keys() {
-        return {
-            SUPABASE_URL: process.env.SUPABASE_URL,
-            SUPABASE_KEY: process.env.SUPABASE_KEY,
-            HF_ACCESS_TOKEN: process.env.HF_ACCESS_TOKEN,
-            HF_INFERENCE_ENDPOINT: process.env.HF_INFERENCE_ENDPOINT,
-            UPSTASH_URL: process.env.UPSTASH_URL,
-            UPSTASH_TOKEN: process.env.UPSTASH_TOKEN
-        }
-    }
-
-    /**
-     * @returns {Object}
-     */
-    get vars() {
-        return {
-            // Just Cors is a proxy which adds CORS headers to the proxied request. See https://justcors.com/ 
-            JUST_CORS: 'https://justcors.com/tl_25352c3/',
-            PORT: 8080,
-            OBJECT_DATA_SINK_BUCKET_NAME: '/training',
-            OBJECT_DATA_SINK_FEEDS_PATH: '/categorization/feeds',
-        };
-    }
-
-    /**
-     * @returns {Object}
-     */
-    get feeds() {
-        return Feeds;
+  /**
+   * @returns {Object}
+   */
+  get featureFlags() {
+    return {
+      MLService: {
+        FEED_ITEM_CLASSIFICATION_ENABLED: process.env.ML_SERVICE_FEED_ITEM_CLASSIFICATION_ENABLED
+      }
     }
   }
+
+  /**
+   * @returns {Object}
+   */
+  get keys() {
+    return {
+      SUPABASE_URL: process.env.SUPABASE_URL,
+      SUPABASE_KEY: process.env.SUPABASE_KEY,
+      HF_ACCESS_TOKEN: process.env.HF_ACCESS_TOKEN,
+      HF_INFERENCE_ENDPOINT: process.env.HF_INFERENCE_ENDPOINT,
+      UPSTASH_URL: process.env.UPSTASH_URL,
+      UPSTASH_TOKEN: process.env.UPSTASH_TOKEN
+    }
+  }
+
+  /**
+   * @returns {Object}
+   */
+  get vars() {
+    return {
+      // Just Cors is a proxy which adds CORS headers to the proxied request. See https://justcors.com/ 
+      JUST_CORS: 'https://justcors.com/tl_3c35606/',
+      PORT: 8080,
+      OBJECT_DATA_SINK_BUCKET_NAME: '/training',
+      OBJECT_DATA_SINK_FEEDS_PATH: '/categorization/feeds',
+    };
+  }
+
+  /**
+   * @returns {Object}
+   */
+  get feeds() {
+    return Feeds;
+  }
+}

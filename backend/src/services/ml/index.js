@@ -1,3 +1,4 @@
+import { ISandbox } from '../../interfaces.js';
 import path from 'path';
 import { CronJob } from 'cron';
 import { stripHtml } from 'string-strip-html';

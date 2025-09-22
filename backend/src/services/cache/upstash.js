@@ -1,3 +1,4 @@
+import { ISandbox } from '../../interfaces.js';
 import { SimpleCache } from './index.js';
 import { Redis } from '@upstash/redis'
 
@@ -9,6 +10,9 @@ export class Upstash extends SimpleCache {
   #redis;
   #sandbox;
 
+  /**
+   * @param {ISandbox} sandbox 
+   */
   constructor(sandbox) {
     super();
     this.#sandbox = sandbox;
@@ -22,6 +26,9 @@ export class Upstash extends SimpleCache {
     });
   }
 
+  /**
+   * @returns {Object}
+   */
   get status() {
     return {
       name: this.constructor.name,
@@ -29,6 +36,12 @@ export class Upstash extends SimpleCache {
     };
   }
 
+  /**
+   * @param {Object} options 
+   * @param {String} options.key
+   * @param {Object} options.value
+   * @param {Object} options.ttl
+   */
   async set({ key, value, ttl = DEFAULT_TTL_MILLIS }) {
     if (!key || !value) {
       return;
@@ -38,10 +51,17 @@ export class Upstash extends SimpleCache {
     await this.#redis.set(key, value, { ex: ttlSeconds });
   }
 
+  /**
+   * @param {String} key 
+   * @returns 
+   */
   async get(key) {
     return await this.#redis.get(key);
   }
 
+  /**
+   * @param {String} key 
+   */
   async deleteEntry(key) {
     await this.#redis.del(key);
   }
@@ -50,6 +70,10 @@ export class Upstash extends SimpleCache {
     await this.#redis.flushdb();
   }
 
+  /**
+   * @param {String} key 
+   * @returns {Boolean}
+   */
   async has(key) {
     if (!key) {
       return false;
@@ -59,6 +83,10 @@ export class Upstash extends SimpleCache {
     return exists === 1;
   }
 
+  /**
+   * @param {String} pattern 
+   * @returns {String[]}
+   */
   async keys(pattern = '*') {
     return await this.#redis.keys(pattern);
   }

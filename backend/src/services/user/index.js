@@ -1,6 +1,7 @@
 import { ApplicationService } from '../../types/application.js';
 import { SystemEvent, Events } from '../../types/system-event.js';
 import { Result, AsyncResult } from '../../types/result.js';
+import { ISandbox, IFeed, FeedItem } from '../../interfaces.js';
 
 /**
  * Manages platform users
@@ -35,9 +36,13 @@ export class UserService extends ApplicationService {
       });
       const f = (await Promise.all(allFeeds)).filter(Boolean);
 
-      // See issue no. 8 to refactor this block
-      return f.reduce((result, curr) => {
-        result.items.push(...curr.items);
+      return f.reduce(
+        /**
+         * @param {{ items: FeedItem[] }} result - Accumulator holding feed items
+         * @param {IFeed} curr - Current feed being reduced
+         */
+        (result, curr) => {
+          result.items.push(...curr.items);
         return result;
       }, { items: [] });
 
@@ -50,7 +55,7 @@ export class UserService extends ApplicationService {
   /**
    * Ranks and sorts feed items based on user preferences
    * @param {Object} categoryRanking - user feed item category rank
-   * @param {Object[]} feedList - list of feeds fetched from the cache
+   * @param {Object[]} feedList - list of feeds
    * @returns {Object[]}
    */
   async #sortUserFeed(categoryRanking, feedList) {

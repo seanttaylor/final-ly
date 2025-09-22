@@ -1,6 +1,5 @@
 import express from 'express';
 import { FeedResource } from '../../types/resource.js';
-import { Result } from '../../types/result.js';
 
 /**
  * Router exposing endpoints for fetching user feeds

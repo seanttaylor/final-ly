@@ -62,11 +62,11 @@ const GLOBALS = {
 /******** ENSURE DESIRED SERVICES ARE DEFINED IN EITHER `services` or `providers` ********/
 const MY_SERVICES = [...core, ...services, ...providers];
 
-new Sandbox(MY_SERVICES, async function(box) {
+new Sandbox(MY_SERVICES, async function(/** @type {ISandbox} **/box) {
   try {
     console.log(`${APP_NAME} v${APP_VERSION}`);
     bootstrapStartupServices();
-
+    
     box.my.Events.addEventListener(Events.FEEDS_REFRESHED, wrapAsyncEventHandler(onFeedsRefreshed));
     box.my.Events.addEventListener(Events.FEED_UPDATED, wrapAsyncEventHandler(onFeedUpdate));
     box.my.Events.addEventListener(Events.DATA_SINK_LABELING_VALIDATED, wrapAsyncEventHandler(onLabelingValidated));
@@ -75,7 +75,7 @@ new Sandbox(MY_SERVICES, async function(box) {
     box.my.Events.addEventListener(Events.PIPELINE_FINISHED, logEvent);
     box.my.Events.addEventListener(Events.TRAINING_DATA_UPLOADED, logEvent);
     
-    box.my.HTTPService.start();
+    box.my.HTTPService.start(); 
 
     function logEvent({ detail: event }) {
       console.log(event);

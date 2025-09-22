@@ -25,14 +25,66 @@ export const IEvent = Object.freeze({});
  * @property {function(): string} generateUUID - A method to generate a UUID string
  */
 
+
+/**
+ * @typedef {Object} Category
+ * @property {string} label - Category label (e.g. "politics", "unknown")
+ * @property {number} score - Confidence score for the label
+ */
+
+
+/**
+ * @typedef {Object} Thumbnail
+ * @property {string|null} url - URL of the thumbnail image, may be null
+ */
+
+
+/**
+ * @typedef {Object} FeedItem
+ * @property {string} title - The headline of the article
+ * @property {string} link - Full URL to the article
+ * @property {string} description - Short description or summary
+ * @property {Category[]} category - Array of categories with scores
+ * @property {Thumbnail} thumbnail - Thumbnail metadata
+ * @property {string} source - Source publication name
+ * @property {string} publicationDate - RFC-2822 formatted publication date
+ * @property {string} author - Author(s) of the article
+ */
+export const FeedItem = Object.freeze({});
+
+/**
+ * @typedef {object} IFeed
+ * @property {string} feed - Feed identifier (e.g. "nytimes_world")
+ * @property {FeedItem[]} items - Array of feed items
+ */
+
+/**
+ * @type {IFeed}
+ */
+export const IFeed = Object.freeze({});
+
+/**
+ * @typedef {Object} IServices
+ * @property {EventTarget} Events
+ * @property {Object} HTTPService
+ * @property {Object} MLService
+ * @property {Object} Cache
+ * @property {Object} Config
+ * @property {Object} Database
+ * @property {Object} FeedMonitor
+ * @property {Object} NOOPService
+ * @property {Object} PatchProvider
+ */
+
 /**
  * @typedef {object} ISandbox
- * @property {object} my - A namespace for custom user-defined functionalities
+ * @property {IServices} my - A namespace for custom user-defined functionalities
  * @property {Core} core - The core functionalities of the sandbox environment
  * @property {function(EventType, EventListener): void} addEventListener - Method to add an event listener, bound to the context of the original object
  * @property {function(EventType, EventListener): void} removeEventListener - Method to remove an event listener, bound to the context of the original object
  * @property {function(Event): boolean} dispatchEvent - Method to dispatch an event, bound to the context of the original object
  */
+
 
 /**
  * @type {ISandbox}
@@ -42,6 +94,8 @@ export const ISandbox = Object.freeze({
   my: {},
   core: {},
 });
+
+
 
 /**
  * @typedef {object} DataAccessLayer

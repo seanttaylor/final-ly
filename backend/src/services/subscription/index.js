@@ -1,3 +1,4 @@
+import { ISandbox } from '../../interfaces.js';
 import { ApplicationService } from '../../types/application.js';
 import { SystemEvent, Events } from '../../types/system-event.js';
 import { Result } from '../../types/result.js';
@@ -6,9 +7,9 @@ import { Result } from '../../types/result.js';
  * Manages user subscriptions
  */
 export class SubscriptionService extends ApplicationService {
+  #sandbox;
   #dbClient;
   #logger;
-  #sandbox;
 
   /**
    * @param {ISandbox} sandbox
