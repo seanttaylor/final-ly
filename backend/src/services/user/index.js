@@ -39,7 +39,7 @@ export class UserService extends ApplicationService {
       return f.reduce(
         /**
          * @param {{ items: FeedItem[] }} result - Accumulator holding feed items
-         * @param {IFeed} curr - Current feed being reduced
+         * @param {IFeed} curr - current feed being reduced
          */
         (result, curr) => {
           result.items.push(...curr.items);

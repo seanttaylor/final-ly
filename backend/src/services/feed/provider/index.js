@@ -134,7 +134,7 @@ export class PatchProvider extends ApplicationService {
 
   abc = [
     { op: 'add', path: '/html', value: null },
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/source', value: 'CBS' },
     { op: 'add', path: '/category', value: [] },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
@@ -146,7 +146,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   aljazeera = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Financial Times' },
     { op: 'add', path: '/category', value: [] },
@@ -164,38 +164,22 @@ export class PatchProvider extends ApplicationService {
     { op: 'copy', from: '/title', path: '/title' },
     { op: 'copy', from: '/description', path: '/description' },
     { op: 'copy', from: '/link', path: '/link' },
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/source', value: 'Arstechnica' },
     { op: 'copy', from: '/media:content/url', path: '/thumbnail/url' },
     { op: 'move', from: '/dc:creator', path: '/author' },
-    {
-      op: 'remove',
-      path: '/slash:comments',
-    },
-    {
-      op: 'remove',
-      path: '/guid',
-    },
-    {
-      op: 'remove',
-      path: '/media:content',
-    },
+    { op: 'remove', path: '/slash:comments' },
+    { op: 'remove', path: '/guid' },
+    { op: 'remove', path: '/media:content' },
   ];
   
   axios = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/category', value: [] },
     { op: 'move', from: '/dc:creator', path: '/author' },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
-    {
-      op: 'move',
-      from: '/content:encoded',
-      path: '/html',
-    },
-    {
-      op: 'remove',
-      path: '/guid',
-    },
+    { op: 'move', from: '/content:encoded', path: '/html', },
+    { op: 'remove', path: '/guid', },
     { op: 'copy', from: '/media:thumbnail/url', path: '/thumbnail/url' },
     { op: 'remove', path: '/media:content' },
     { op: 'remove', path: '/media:thumbnail' },
@@ -203,22 +187,19 @@ export class PatchProvider extends ApplicationService {
   ];
 
   bbc = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'copy', from: '/media:thumbnail/url', path: '/thumbnail/url' },
     { op: 'add', path: '/author', value: null },
     { op: 'add', path: '/category', value: [] },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
-    {
-      op: 'remove',
-      path: '/guid',
-    },
+    { op: 'remove', path: '/guid' },
     { op: 'remove', path: '/media:thumbnail' },
     { op: 'add', path: '/source', value: 'BBC News' },
   ]
 
   cbs = [
     { op: 'add', path: '/html', value: null },
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/source', value: 'CBS' },
     { op: 'add', path: '/category', value: [] },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
@@ -230,7 +211,7 @@ export class PatchProvider extends ApplicationService {
 
   democracy_now = [
     { op: 'add', path: '/html', value: null },
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/source', value: 'Democracy Now' },
     { op: 'add', path: '/category', value: [] },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
@@ -243,7 +224,7 @@ export class PatchProvider extends ApplicationService {
   economist = [
     { op: 'add', path: '/author', value: null },
     { op: 'add', path: '/html', value: null },
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/source', value: 'The Economist' },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
@@ -253,7 +234,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   fastcompany = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'FastCompany' },
     { op: 'add', path: '/category', value: [] },
@@ -270,7 +251,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   financial_times = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Financial Times' },
     { op: 'add', path: '/category', value: [] },
@@ -284,7 +265,7 @@ export class PatchProvider extends ApplicationService {
   ]
   
   foreign_policy = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Foreign Policy' },
     { op: 'add', path: '/category', value: [] },
@@ -302,7 +283,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   fortune = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Fortune' },
     { op: 'add', path: '/category', value: [] },
@@ -320,7 +301,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   guardian_economics = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'The Guardian' },
     { op: 'add', path: '/category', value: [] },
@@ -334,7 +315,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   gizmodo = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Gizmodo' },
     { op: 'add', path: '/category', value: [] },
@@ -350,7 +331,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   intercept = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'The Intercept' },
     { op: 'add', path: '/category', value: [] },
@@ -369,7 +350,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   latimes = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'The Los Angeles Times' },
     { op: 'add', path: '/category', value: [] },
@@ -383,7 +364,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   mit_tech_review = [
-    {op: 'add', path: '/thumbnail', value: { url: null}},
+    {op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400'}},
     { op: 'move', from: '/content:encoded', path: '/html' },
     { op: 'move', from: '/dc:creator', path: '/author' },
     {
@@ -400,7 +381,7 @@ export class PatchProvider extends ApplicationService {
   ];
 
   the_nation = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'The Nation' },
     { op: 'add', path: '/category', value: [] },
@@ -415,7 +396,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   newsweek = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Newsweek' },
     { op: 'add', path: '/category', value: [] },
@@ -428,7 +409,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   nytimes_world = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/source', value: 'The New York Times' },
     //{ op: 'copy', from: '/media:content/url', path: '/thumbnail/url'},
@@ -442,7 +423,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   npr = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/category', value: [] },
     { op: 'remove', path: '/guid' },
     { op: 'remove', path: '/image' },
@@ -453,7 +434,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   politico = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Politico' },
     { op: 'add', path: '/category', value: [] },
@@ -468,7 +449,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   quartz = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Quartz' },
     { op: 'add', path: '/category', value: [] },
@@ -482,7 +463,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   salon = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Salon' },
     { op: 'add', path: '/category', value: [] },
@@ -498,7 +479,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   scientific_american = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Scientific American' },
     { op: 'add', path: '/category', value: [] },
@@ -510,7 +491,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   smithsonian_magazine = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Smithsonian Magazine' },
     { op: 'add', path: '/category', value: [] },
@@ -521,7 +502,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   science_daily = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Science Daily' },
     { op: 'add', path: '/category', value: [] },
@@ -533,7 +514,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   sydney_morning_herald = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Sydney Morning Herald' },
     { op: 'add', path: '/category', value: [] },
@@ -546,7 +527,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   un_news = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'UN News' },
     { op: 'add', path: '/category', value: [] },
@@ -559,7 +540,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   vanityfair = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/source', value: 'Vanity Fair' },
     //{ op: 'copy', from: '/media:thumbnail/url', path: '/thumbnail/url' },
@@ -581,13 +562,13 @@ export class PatchProvider extends ApplicationService {
     },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },
     { op: 'add', path: '/source', value: 'The Washington Post' },
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/category', value: [] },
     { op: 'add', path: '/html', value: null }
   ]
 
   wired_top = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value: null },
     { op: 'add', path: '/category', value: [] },
     { op: 'move', from: '/dc:creator', path: '/author' },
@@ -617,7 +598,7 @@ export class PatchProvider extends ApplicationService {
   ]
 
   vox = [
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'add', path: '/html', value:  null },
     { op: 'add', path: '/source', value: 'Vox' },
     { op: 'add', path: '/category', value: [] },
@@ -639,7 +620,7 @@ export class PatchProvider extends ApplicationService {
       op: 'remove',
       path: '/guid',
     },
-    { op: 'add', path: '/thumbnail', value: { url: null } },
+    { op: 'add', path: '/thumbnail', value: { url: 'https://placehold.co/400' } },
     { op: 'copy', from: '/media:content/url', path: '/thumbnail/url' },    
     { op: 'copy', from: '/title', path: '/description' },
     { op: 'move', from: '/pubDate', path: '/publicationDate' },

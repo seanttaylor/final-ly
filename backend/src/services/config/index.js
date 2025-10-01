@@ -48,7 +48,7 @@ export class Configuration extends ApplicationService {
   get vars() {
     return {
       // Just Cors is a proxy which adds CORS headers to the proxied request. See https://justcors.com/ 
-      JUST_CORS: 'https://justcors.com/tl_3c35606/',
+      JUST_CORS: 'https://justcors.com/tl_a9a6867/',
       PORT: 8080,
       OBJECT_DATA_SINK_BUCKET_NAME: '/training',
       OBJECT_DATA_SINK_FEEDS_PATH: '/categorization/feeds',

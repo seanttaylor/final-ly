@@ -49,6 +49,7 @@ new Sandbox(MY_SERVICES, async function(box) {
 
     box.my.Events.addEventListener(Events.FEED_REFRESHED, wrapAsyncEventHandler(onFeedRefreshed));
     box.my.Events.addEventListener(Events.FEED_COMPONENT_INITIALIZED, wrapAsyncEventHandler(onFeedInitialized));
+    box.my.Events.addEventListener(Events.COMPONENT_UPDATE_FAILED, wrapAsyncEventHandler(onComponentUpdateFailed));
 
     // setTimeout(() => {
     //   box.my.Events.dispatchEvent(new SystemEvent(Events.FEED_REFRESHED, {}))
@@ -74,10 +75,19 @@ new Sandbox(MY_SERVICES, async function(box) {
     }
 
     /**
+     * Fires when a UI component encounters an exception
+     * @param {IEvent<Object>} event
+     */
+    function onComponentUpdateFailed(event) {
+      console.log(event)
+    }
+
+    /**
      * Fires when all subscribed feed updates have been completed or atttempted
      * @param {IEvent<Object>} event
      */
     async function onFeedRefreshed(event) {
+      // See issue no. 13
       console.log(event);
       const { etag, feed } = event.payload;
       
