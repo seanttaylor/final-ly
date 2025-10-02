@@ -57,8 +57,14 @@ export class FeedService extends ApplicationService {
 
         // if (this.#validateFeed(feedResult))
         if (!feedResult) {
-          this.#logger.info(
-            `INFO (FeedService): Could not validate user feed. See details -> (VALIDATION FAILURE DETAILS)`
+          this.#logger.error(
+            `INTERNAL_ERROR (FeedService): Exception encountered while refreshing the feed.`
+          );
+          this.#events.dispatchEvent(
+            new SystemEvent(Events.COMPONENT_UPDATE_FAILED, {
+              component: 'CURRENTLY-FEED',
+              error: 'No details'
+            })
           );
           return;
         }

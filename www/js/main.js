@@ -79,7 +79,10 @@ new Sandbox(MY_SERVICES, async function(box) {
      * @param {IEvent<Object>} event
      */
     function onComponentUpdateFailed(event) {
-      console.log(event)
+      // Inspect event payload to determine *which* component failed and *whether*
+      // a component error state should be rendered
+      console.log(event);
+      box.my.UIComponentProvider.Feed.renderErrorState();
     }
 
     /**

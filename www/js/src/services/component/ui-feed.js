@@ -65,7 +65,17 @@ export const UIFeed = {
                 component: this.nodeName,
                 error: ex.message
               }));
+              this.renderErrorState();
             }
+          }
+
+          renderErrorState() {
+            this.innerHTML = `
+              <ion-icon name="logo-ionic" size="large" color="primary"></ion-icon>
+              <ion-text color="primary">
+                <h4>Hmm. Looks like we're weren't able to load the feed. Try again later.</h4>
+              </ion-text>
+            `
           }
 
           renderInitialState() {
