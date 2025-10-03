@@ -5,10 +5,10 @@ import { ApplicationService } from '../../types/application.js';
 import { StatusRouter } from './status.js';
 import { FeedRouter } from './feed.js';
 import { SubscriptionRouter } from './subscription.js';
-//import { EventsRouter } from './events.js';
+import { EventsRouter } from './events.js';
 
 /**
- * @typedef {object} DependentServices
+ * @typedef {Object} DependentServices
  */
 
 export class RouteService extends ApplicationService {
@@ -47,6 +47,6 @@ export class RouteService extends ApplicationService {
       events, 
       SubscriptionService
     });
-    //this.Events = new EventsRouter({ MiddlewareProvider, events });
+    this.Events = new EventsRouter({ MiddlewareProvider, events, logger });
   }
 }

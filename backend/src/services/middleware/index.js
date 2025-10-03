@@ -14,6 +14,18 @@ export class MiddlewareProvider {
     this.#cache = sandbox.my.Cache;
   }
 
+  Auth = {
+    /**
+     * Express middleware that queries Redis on [GET] requests for cached feeds
+     * @param {*} req 
+     * @param {*} res 
+     * @param {*} next 
+     */
+    verifyAuth: async (req, res, next) => { 
+      next();
+    }
+  }
+
   FeedService = {
     /**
      * Express middleware that queries Redis on [GET] requests for cached feeds

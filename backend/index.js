@@ -74,7 +74,9 @@ new Sandbox(MY_SERVICES, async function(/** @type {ISandbox} **/box) {
     box.my.Events.addEventListener(Events.DATA_SINK_LOADED, logEvent);
     box.my.Events.addEventListener(Events.PIPELINE_FINISHED, logEvent);
     box.my.Events.addEventListener(Events.TRAINING_DATA_UPLOADED, logEvent);
-    
+
+    box.my.Events.addEventListener(Events.FEED_PUSHED, wrapAsyncEventHandler(onFeedPushed));
+
     box.my.HTTPService.start(); 
 
     function logEvent({ detail: event }) {
@@ -113,6 +115,16 @@ new Sandbox(MY_SERVICES, async function(/** @type {ISandbox} **/box) {
           );
         }
       };
+    }
+
+    /**
+     * Fires when a non-RSS feed source pushes an update via HTTP call (e.g. 
+     * LinkedIn News is scraped via Browse AI, which hits the /events endpoint 
+     * with the collected data)
+     * @param {IEvent<Object>} event
+     */
+    function onFeedPushed(event) {
+      console.log(event);
     }
 
     /**

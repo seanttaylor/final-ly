@@ -16,6 +16,8 @@ export const Events = Object.freeze({
   FEEDS_REFRESHED: 'evt.feeds.feeds_refreshed',
   // Indicates a single feed has been updated and cached
   FEED_UPDATED: 'evt.feeds.feed_updated',
+  // Indicates a feed from a non-RSS source has been received via the API
+  FEED_PUSHED: 'evt.feeds.feed_pushed',
   FEED_MONITOR_INITIALIZED: 'evt.feeds.feed_monitor_initialized',
   // Indicates the currently-feed component has been initialized
   FEED_COMPONENT_INITIALIZED: 'evt.ui.components.feed_initialized',
