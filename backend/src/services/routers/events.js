@@ -40,7 +40,7 @@ export class EventsRouter {
    */ 
   constructor(config) {
     const { MiddlewareProvider, events, logger } = config;
-    router.use(MiddlewareProvider.Auth.verifyAuth);
+    router.use(MiddlewareProvider.Auth.verify);
 
     /**
      * Dispatches a specified application event

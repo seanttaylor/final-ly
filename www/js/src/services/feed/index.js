@@ -41,7 +41,7 @@ export class FeedService extends ApplicationService {
         }
       } catch(ex) {
         this.#logger.error(
-          `INTERNAL_ERROR (FeedService): Exception encountered while fetching feed. See details => ${ex.message}`
+          `INTERNAL_ERROR (FeedService): **EXCEPTION ENCOUNTERED** while fetching feed. See details => ${ex.message}`
         );
       }
     }
@@ -58,7 +58,7 @@ export class FeedService extends ApplicationService {
         // if (this.#validateFeed(feedResult))
         if (!feedResult) {
           this.#logger.error(
-            `INTERNAL_ERROR (FeedService): Exception encountered while refreshing the feed.`
+            `INTERNAL_ERROR (FeedService): **EXCEPTION ENCOUNTERED** while refreshing the feed.`
           );
           this.#events.dispatchEvent(
             new SystemEvent(Events.COMPONENT_UPDATE_FAILED, {
@@ -78,7 +78,7 @@ export class FeedService extends ApplicationService {
         );
       } catch (ex) {
         this.#logger.error(
-          `INTERNAL_ERROR (FeedService): Exception encountered while refreshing feed. See details -> ${ex.message}`
+          `INTERNAL_ERROR (FeedService): **EXCEPTION ENCOUNTERED** while refreshing feed. See details -> ${ex.message}`
         );
       }
     }
@@ -118,7 +118,7 @@ export class FeedMonitor extends ApplicationService {
       
     } catch(ex) {
       this.#logger.error(
-        `INTERNAL_ERROR (FeedMonitor): Exception encountered while initializing the feed monitor. See details -> ${ex.message}`
+        `INTERNAL_ERROR (FeedMonitor): **EXCEPTION ENCOUNTERED** while initializing the feed monitor. See details -> ${ex.message}`
       );
     }
   }
@@ -131,7 +131,7 @@ export class FeedMonitor extends ApplicationService {
       await this.#feedService.refresh();
     } catch (ex) {
       this.#logger.error(
-        `INTERNAL_ERROR (FeedMonitor): Exception encountered during scheduled feed refresh. See details -> ${ex.message}`
+        `INTERNAL_ERROR (FeedMonitor): **EXCEPTION ENCOUNTERED** during scheduled feed refresh. See details -> ${ex.message}`
       );
     }
   }

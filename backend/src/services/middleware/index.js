@@ -5,6 +5,8 @@ import { Result } from '../../types/result.js';
 export class MiddlewareProvider {
   #sandbox;
   #cache;
+  #dbClient;
+  #logger;
 
   /**
    * @param {ISandbox} sandbox
@@ -12,17 +14,54 @@ export class MiddlewareProvider {
   constructor(sandbox) {
     this.#sandbox = sandbox;
     this.#cache = sandbox.my.Cache;
+    this.#dbClient = sandbox.my.Database.getClient();
+    this.#logger = sandbox.core.logger.getLoggerInstance();
   }
 
   Auth = {
-    /**
-     * Express middleware that queries Redis on [GET] requests for cached feeds
-     * @param {*} req 
-     * @param {*} res 
-     * @param {*} next 
-     */
-    verifyAuth: async (req, res, next) => { 
-      next();
+   /**
+    * Middleware validating an API key accompanying a client request
+    * @param {Object} dbClient - an instance of the database client
+    * @param {Object} logger - an instance of the logger client
+    * @returns {function(res, req, next): void} - an ExpresJS middleware function
+    */
+    verify: async (req, res, next) => {
+      try {
+        const apiKey = req.headers['x-authorization'];
+
+        if (!apiKey) {
+          res.status(401);
+          res.json([]);
+          return;
+        }
+
+        const CURRENT_DATETIME_MILLIS = new Date().getTime();
+        const { data, error } = await this.#dbClient.from('api_keys')
+          .select()
+          .eq('key', apiKey);
+
+        const [record] = data;
+
+        if (!record) {
+          throw new Error('Missing or invalid authorization credential');
+        }
+        const CREDENTIAL_EXPIRY_DATETIME_MILLS = new Date(record.expiryDate).getTime();
+
+        if (CURRENT_DATETIME_MILLIS > CREDENTIAL_EXPIRY_DATETIME_MILLS) {
+          res.status(401);
+          res.json([]);
+          return;
+        }
+
+        if (error || (!Object.keys(record).includes('key'))) {
+          throw new Error(error.message);
+        }
+
+        next();
+      } catch (ex) {
+        this.#logger.error(`INTERNAL_ERROR (MiddlewareProvider): **EXCEPTION ENCOUNTERED while authenticating request on (${req.path}). See details -> ${ex.message}`);
+        next(ex);
+      }
     }
   }
 

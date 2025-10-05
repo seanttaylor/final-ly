@@ -104,12 +104,8 @@ export class HTTPService extends ApplicationService {
       res.set('X-Total-Count', 0);
       res.set('X-Request-Id', res.locals.request_id);
       
-      console.error(`INTERNAL_ERROR (HTTPService): Exception encountered on route (${req.path}). See details -> ${error}`);
-      res.status(status).send({ 
-        status,
-        items: [], 
-        error:'INTERNAL_ERROR' 
-      });
+      console.error(`INTERNAL_ERROR (HTTPService): **EXCEPTION ENCOUNTERED** on route (${req.path}). See details -> ${error}`);
+      res.status(status).send([]);
     });
     
     // Skips launching backend in unit test mode
